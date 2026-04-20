@@ -1,26 +1,239 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-brand: #FF4000;
+  --color-brand-dark: #CC3300;
+  --color-accent: #F0652F;
+  --color-navy: #000000;
+  --color-navy-light: #222222;
+  --color-neutral-mid: #828282;
+  --color-neutral-dark: #000000;
+  --color-neutral-light: #EBEBE6;
+  --color-surface: #F6F6EF;
+  --color-border: #DCDCC7;
+  --color-slate-300: #CCCCCC;
+  --color-slate-400: #828282;
+  --color-slate-500: #666666;
+  --color-slate-700: #000000;
+
+  --font-heading: var(--font-sora);
+  --font-body: var(--font-inter);
+
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-fade-in: fadeIn 0.6s ease-out forwards;
+  --animate-slide-up: slideUp 0.6s ease-out forwards;
+  --animate-pulse-glow: pulseGlow 2s ease-in-out infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 64, 0, 0.15);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(255, 64, 0, 0.3);
+  }
+}
+
+/* ===== BASE STYLES ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), system-ui, -apple-system, sans-serif;
+  color: var(--color-slate-700);
+  background: var(--color-surface);
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ===== DOT GRID PATTERN ===== */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ===== MESH GRADIENT ===== */
+.mesh-gradient {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(255, 64, 0, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(240, 101, 47, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(255, 64, 0, 0.04) 0%, transparent 50%);
+}
+
+/* ===== GLASS EFFECT ===== */
+.glass-navbar {
+  background: rgba(246, 246, 239, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ===== TEAL GLOW BORDER (NOW YC ORANGE GLOW) ===== */
+.glow-border {
+  box-shadow: 0 0 10px rgba(255, 64, 0, 0.1),
+    inset 0 0 0 1px rgba(255, 64, 0, 0.2);
+}
+
+.glow-border-strong {
+  box-shadow: 0 0 20px rgba(255, 64, 0, 0.15),
+    0 0 40px rgba(255, 64, 0, 0.08),
+    inset 0 0 0 1px rgba(255, 64, 0, 0.4);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-neutral-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-slate-400);
+}
+
+/* ===== SELECTION ===== */
+::selection {
+  background: rgba(30, 207, 160, 0.25);
+  color: var(--color-navy);
+}
+
+/* ===== BASE TYPOGRAPHY SPACING =====
+   Tailwind preflight zeroes all margins. Restore
+   sensible defaults so components breathe naturally.
+========================================= */
+@layer base {
+  h1 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+  }
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 0.65rem;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  ul,
+  ol {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+
+  li {
+    margin-bottom: 0.25rem;
+  }
+
+  /* Sections naturally carry their own padding — 
+     never let the browser add extra body padding */
+  section {
+    padding: 0;
+  }
+}
+
+/* ===== HERO LEGIBILITY HELPERS ===== */
+.text-shadow-hero {
+  text-shadow:
+    0 2px 20px rgba(0, 0, 0, 0.4),
+    0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.text-shadow-sm {
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* ===== MARQUEE (integrations strip) ===== */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-wrapper {
+  overflow: hidden;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
 }
