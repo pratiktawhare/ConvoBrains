@@ -3,6 +3,8 @@
 import { InlineWidget } from "react-calendly";
 import { Check, Clock, Video, CalendarCheck } from "lucide-react";
 
+const CALENDLY_URL = process.env.NEXT_PUBLIC_CALENDLY_URL!;
+
 const bulletPoints = [
   "Live walkthrough tailored to your industry",
   "See the customer journey explorer in action",
@@ -67,7 +69,7 @@ export default function DemoClient() {
             style={{ minHeight: 700 }}
           >
             <InlineWidget
-              url="https://calendly.com/pratiktawhare2005/30min"
+              url={CALENDLY_URL}
               styles={{ height: "700px", width: "100%" }}
               pageSettings={{
                 backgroundColor: "ffffff",
