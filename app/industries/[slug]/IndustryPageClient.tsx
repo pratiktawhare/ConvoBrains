@@ -259,34 +259,13 @@ export default function IndustryPageClient({
                 }
 
                 return rows.map((row, rowIdx) => {
-                  const isReversed = rowIdx % 2 === 1;
-
                   return (
                     <div key={rowIdx}>
-                      {/* Connector arrow between rows */}
-                      {rowIdx > 0 && (
-                        <div
-                          className="py-2"
-                          style={{
-                            display: "flex",
-                            justifyContent: isReversed ? "flex-end" : "flex-start",
-                            paddingLeft: isReversed ? 0 : 48,
-                            paddingRight: isReversed ? 48 : 0,
-                          }}
-                        >
-                          <div
-                            className="w-px h-8"
-                            style={{ background: "#E2E8F0" }}
-                          />
-                        </div>
-                      )}
-
                       {/* Row of cards */}
                       <div
                         className="grid gap-4"
                         style={{
                           gridTemplateColumns: `repeat(${Math.min(row.length, 3)}, 1fr)`,
-                          direction: isReversed ? "rtl" : "ltr",
                         }}
                       >
                         {row.map((stage, colIdx) => {
@@ -302,7 +281,6 @@ export default function IndustryPageClient({
                               }
                               className="text-left rounded-xl p-5 transition-all duration-200 group"
                               style={{
-                                direction: "ltr",
                                 background: isActive ? "#F8FAFC" : "#fff",
                                 border: `1.5px solid ${isActive ? "#0F7AE5" : "#E2E8F0"}`,
                                 boxShadow: isActive
@@ -354,7 +332,7 @@ export default function IndustryPageClient({
                         {/* Fill empty grid cells for incomplete rows */}
                         {row.length < 3 &&
                           Array.from({ length: 3 - row.length }).map((_, i) => (
-                            <div key={`empty-${i}`} style={{ direction: "ltr" }} />
+                            <div key={`empty-${i}`} />
                           ))}
                       </div>
                     </div>
