@@ -59,7 +59,7 @@ export function IndustryCard({
   return (
     <Link
       href={href}
-      className="group block bg-white rounded-2xl border border-border p-6 md:p-8 transition-all duration-300 hover:shadow-lg hover:border-brand/30 hover:-translate-y-1"
+      className="group flex flex-col bg-white rounded-2xl border border-border p-6 md:p-8 transition-all duration-300 hover:shadow-lg hover:border-brand/30 hover:-translate-y-1 h-[220px] w-full overflow-hidden"
     >
       <div className="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center mb-5 transition-colors duration-300 group-hover:bg-brand/15">
         <Icon className="w-6 h-6 text-brand" />
@@ -68,7 +68,7 @@ export function IndustryCard({
         {industry}
       </h3>
       <p className="text-sm text-neutral-mid mb-4 leading-relaxed">{tagline}</p>
-      <span className="text-sm font-medium text-brand inline-flex items-center gap-1 group-hover:gap-2 transition-all duration-300">
+      <span className="text-sm font-medium text-brand inline-flex items-center gap-1 group-hover:gap-2 transition-all duration-300 mt-auto">
         Explore
         <svg
           className="w-4 h-4"

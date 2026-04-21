@@ -4,51 +4,50 @@ import { SectionWrapper } from "@/components/SectionWrapper";
 import { EyebrowTag } from "@/components/EyebrowTag";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { Button } from "@/components/Button";
-import { Check } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 
 const plans = [
   {
     name: "Starter",
-    price: "₹24,999",
-    period: "/month",
-    description: "For small teams getting started with conversation intelligence.",
+    tagline: "For small teams getting started",
+    description:
+      "Begin with core conversation intelligence and basic customer profiles. Ideal for teams exploring data-driven engagement.",
     features: [
-      "Up to 5,000 call minutes/month",
       "Conversation intelligence engine",
-      "Basic customer profiles",
+      "Unified customer profiles",
+      "Basic segmentation",
       "WhatsApp integration",
       "Email support",
-      "5 team members",
+      "Up to 5 team members",
     ],
-    cta: "Start Free Trial",
+    cta: "Talk to Sales",
     popular: false,
   },
   {
     name: "Growth",
-    price: "₹74,999",
-    period: "/month",
-    description: "For growing teams that need full CDP capabilities and automation.",
+    tagline: "For scaling teams",
+    description:
+      "Full CDP capabilities with journey orchestration, AI-powered decisioning, and cross-channel automation.",
     features: [
-      "Up to 25,000 call minutes/month",
-      "Full CDP with segmentation",
+      "Full CDP with advanced segmentation",
       "Journey builder & automation",
       "A/B testing & funnel analysis",
-      "WhatsApp + SMS + Email",
+      "WhatsApp + SMS + Email campaigns",
       "AI-powered next best action",
-      "25 team members",
+      "Predictive scoring & RFM",
+      "Up to 25 team members",
       "Priority support",
     ],
-    cta: "Book a Demo",
+    cta: "Talk to Sales",
     popular: true,
   },
   {
     name: "Enterprise",
-    price: "Custom",
-    period: "",
-    description: "For large organizations with custom requirements and SLAs.",
+    tagline: "For large organizations",
+    description:
+      "Unlimited scale with custom integrations, dedicated support, SLAs, and on-premise deployment options.",
     features: [
-      "Unlimited call minutes",
-      "Full platform access",
+      "Everything in Growth",
       "Agentic AI & Co-Marketer",
       "Custom integrations & APIs",
       "Dedicated success manager",
@@ -57,7 +56,7 @@ const plans = [
       "On-premise deployment option",
       "SOC 2 compliance",
     ],
-    cta: "Contact Sales",
+    cta: "Talk to Sales",
     popular: false,
   },
 ];
@@ -71,12 +70,13 @@ export default function Pricing() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <EyebrowTag label="Pricing" dark />
           <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-heading font-bold text-white leading-[1.1] mb-6">
-            Simple, transparent
+            Plans that scale
             <br />
-            <span className="text-accent">pricing.</span>
+            <span className="text-accent">with your business</span>
           </h1>
           <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-            Start with a free trial. Scale as you grow. No hidden fees.
+            Every business is different. Choose a tier and we&apos;ll build a
+            custom quote based on your volume, channels, and integrations.
           </p>
         </div>
       </section>
@@ -100,18 +100,21 @@ export default function Pricing() {
                   </div>
                 )}
                 <div className="mb-6">
-                  <h3 className="text-xl font-heading font-semibold text-navy mb-2">
+                  <h3 className="text-xl font-heading font-semibold text-navy mb-1">
                     {plan.name}
                   </h3>
-                  <p className="text-sm text-neutral-mid mb-4">
+                  <p className="text-xs font-medium text-brand uppercase tracking-wider mb-3">
+                    {plan.tagline}
+                  </p>
+                  <div className="flex items-baseline gap-1 mb-3">
+                    <span className="text-3xl font-heading font-bold text-navy">
+                      Custom
+                    </span>
+                    <span className="text-neutral-mid text-sm">pricing</span>
+                  </div>
+                  <p className="text-sm text-neutral-mid leading-relaxed">
                     {plan.description}
                   </p>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-heading font-bold text-navy">
-                      {plan.price}
-                    </span>
-                    <span className="text-neutral-mid text-sm">{plan.period}</span>
-                  </div>
                 </div>
 
                 <ul className="space-y-3 mb-8 flex-1">
@@ -127,29 +130,46 @@ export default function Pricing() {
 
                 <Button
                   href="/demo"
-                  variant={plan.popular ? "primary" : "outline"}
+                  variant="primary"
                   size="lg"
                   className="w-full justify-center"
                 >
                   {plan.cta}
+                  <ArrowRight className="w-4 h-4 ml-1.5" />
                 </Button>
               </div>
             </ScrollReveal>
           ))}
         </div>
 
-        {/* FAQ teaser */}
+        {/* Bottom note */}
         <ScrollReveal delay={0.3}>
-          <div className="mt-20 text-center">
+          <div className="mt-16 bg-neutral-light border border-border rounded-2xl p-8 md:p-10 max-w-3xl mx-auto text-center">
             <h2 className="text-2xl font-heading font-semibold text-navy mb-3">
-              Questions? We&apos;ve got answers.
+              How does custom pricing work?
             </h2>
-            <p className="text-neutral-mid mb-6 max-w-lg mx-auto">
-              Talk to our team for a custom quote or to understand which plan
-              fits your needs.
+            <p className="text-neutral-mid mb-4 max-w-lg mx-auto leading-relaxed">
+              We tailor every plan to your specific needs — based on your data
+              volume, number of channels, integrations, and team size. No
+              surprises, no hidden fees.
             </p>
+            <div className="flex flex-wrap justify-center gap-3 mb-6">
+              {[
+                "Volume-based",
+                "Channel mix",
+                "Integration count",
+                "Support tier",
+              ].map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs font-medium bg-white border border-border text-navy py-1.5 px-3 rounded-full"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
             <Button href="/demo" variant="outline" size="md">
-              Talk to Sales
+              Get a Custom Quote
             </Button>
           </div>
         </ScrollReveal>

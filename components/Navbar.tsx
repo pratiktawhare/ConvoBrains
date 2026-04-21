@@ -315,7 +315,7 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link href="#" className="text-sm font-medium text-neutral-mid hover:text-navy transition-colors px-3 py-2">
+            <Link href="/login" className="text-sm font-medium text-neutral-mid hover:text-navy transition-colors px-3 py-2">
               Login
             </Link>
             <Button href="/demo" variant="primary" size="sm">
@@ -422,7 +422,7 @@ export function Navbar() {
             </Link>
 
             <div className="pt-4 border-t border-border space-y-2">
-              <Link href="#" className="block w-full text-center px-4 py-2.5 text-sm font-medium text-neutral-mid border border-border rounded-full hover:bg-neutral-light" onClick={() => setMobileOpen(false)}>
+              <Link href="/login" className="block w-full text-center px-4 py-2.5 text-sm font-medium text-neutral-mid border border-border rounded-full hover:bg-neutral-light" onClick={() => setMobileOpen(false)}>
                 Login
               </Link>
               <Button href="/demo" variant="primary" size="md" className="w-full justify-center">

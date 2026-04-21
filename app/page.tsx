@@ -47,9 +47,34 @@ const dataSources = [
 ];
 
 const integrations = [
-  "Salesforce", "HubSpot", "Zoho", "Shopify",
-  "WooCommerce", "WhatsApp", "Google Analytics",
-  "Twilio", "Intercom", "Meta Ads"
+  {
+    category: "CRM & Sales",
+    icon: <User className="w-5 h-5" />,
+    color: "bg-blue-50 border-blue-200 text-blue-600",
+    items: ["Salesforce", "HubSpot", "Zoho CRM", "Freshsales"],
+    desc: "Sync contacts, deals, and lifecycle stages in real time.",
+  },
+  {
+    category: "eCommerce",
+    icon: <ShoppingCart className="w-5 h-5" />,
+    color: "bg-emerald-50 border-emerald-200 text-emerald-600",
+    items: ["Shopify", "WooCommerce", "Magento"],
+    desc: "Import orders, carts, and product events automatically.",
+  },
+  {
+    category: "Messaging",
+    icon: <MessageSquare className="w-5 h-5" />,
+    color: "bg-green-50 border-green-200 text-green-600",
+    items: ["WhatsApp", "Twilio", "Intercom"],
+    desc: "Trigger and track conversations across every channel.",
+  },
+  {
+    category: "Analytics & Ads",
+    icon: <Zap className="w-5 h-5" />,
+    color: "bg-amber-50 border-amber-200 text-amber-600",
+    items: ["Google Analytics", "Meta Ads", "Google Ads"],
+    desc: "Feed audience segments directly into ad platforms.",
+  },
 ];
 
 export default function Home() {
@@ -206,7 +231,7 @@ export default function Home() {
         {/* Data source channels */}
         <ScrollReveal delay={0.1}>
           <p className="text-center text-xs font-semibold uppercase tracking-widest text-neutral-mid mb-4">Channels we capture from</p>
-          <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-4 max-w-5xl mx-auto mb-12">
+          <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-4 max-w-5xl mx-auto mb-14">
             {dataSources.map((source) => (
               <div key={source.label} className="flex flex-col items-center justify-center gap-2">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${source.color} border border-border`}>
@@ -218,14 +243,30 @@ export default function Home() {
           </div>
         </ScrollReveal>
 
-        {/* Platform integrations */}
+        {/* Platform integrations – categorized cards */}
         <ScrollReveal delay={0.2}>
-          <p className="text-center text-xs font-semibold uppercase tracking-widest text-neutral-mid mb-4">Platforms we integrate with</p>
-          <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-            {integrations.map((name) => (
-              <div key={name} className="px-4 py-1.5 rounded-md border border-border bg-neutral-light text-xs font-medium text-slate-500">
-                {name}
-              </div>
+          <p className="text-center text-xs font-semibold uppercase tracking-widest text-neutral-mid mb-6">Platforms we integrate with</p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
+            {integrations.map((group, i) => (
+              <ScrollReveal key={group.category} delay={0.15 + i * 0.07}>
+                <div className="bg-white border border-border rounded-2xl p-6 h-full shadow-sm hover:shadow-md transition-shadow">
+                  {/* Category header */}
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 border ${group.color}`}>
+                    {group.icon}
+                  </div>
+                  <h4 className="text-sm font-heading font-semibold text-black mb-1">{group.category}</h4>
+                  <p className="text-xs text-neutral-mid mb-4 leading-relaxed">{group.desc}</p>
+
+                  {/* Integration names */}
+                  <div className="flex flex-wrap gap-2">
+                    {group.items.map((name) => (
+                      <span key={name} className="px-2.5 py-1 rounded-full border border-border bg-neutral-light text-[11px] font-medium text-black">
+                        {name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </ScrollReveal>
             ))}
           </div>
         </ScrollReveal>

@@ -99,94 +99,98 @@ export default function IndustryPageClient({
         </div>
       </section>
 
-      {/* ─── Touchpoints ─── */}
-      <div className="bg-surface">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-          <div className="mb-2">
-            <span
-              className="text-[10px] font-semibold uppercase tracking-widest"
-              style={{ color: "#1E40AF" }}
-            >
-              Key touchpoints
-            </span>
+      {/* ─── Touchpoints + Problem + Stats ─── */}
+      <SectionWrapper bg="surface">
+        {/* Key Touchpoints — visual flow */}
+        <ScrollReveal>
+          <div className="text-center mb-10">
+            <EyebrowTag label="Key Touchpoints" />
+            <p className="text-sm text-neutral-mid mt-2 max-w-lg mx-auto">
+              The critical moments where ConvoBrains captures signals and drives action.
+            </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {industry.touchpoints.map((tp) => (
-              <span
+          <div className="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto mb-16">
+            {industry.touchpoints.map((tp, i) => (
+              <div
                 key={tp}
-                className="px-3 py-1.5 rounded-full text-xs font-medium"
-                style={{
-                  background: "#DBEAFE",
-                  color: "#1E40AF",
-                }}
+                className="flex items-center gap-2.5 bg-white border border-border rounded-xl px-4 py-3 shadow-sm"
               >
-                {tp}
-              </span>
+                <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center text-brand text-xs font-bold shrink-0">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <span className="text-sm font-medium text-navy">{tp}</span>
+              </div>
             ))}
           </div>
-        </div>
+        </ScrollReveal>
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-          <ScrollReveal>
-            {/* Problem callout */}
-            <div
-              className="rounded-xl p-6 md:p-8 mb-10"
-              style={{
-                background: "#FEF3C7",
-                borderLeft: "4px solid #D97706",
-              }}
-            >
-              <span
-                className="text-[10px] font-bold uppercase tracking-widest block mb-3"
-                style={{ color: "#D97706" }}
-              >
-                The business problem
-              </span>
-              <p
-                className="text-sm md:text-[15px] font-semibold leading-relaxed mb-2"
-                style={{ color: "#0F172A" }}
-              >
-                {industry.meta.problem}
-              </p>
-              <p className="text-sm leading-relaxed" style={{ color: "#92400E" }}>
-                {industry.meta.problemSub}
+        {/* Business Problem — compact Before vs After */}
+        <ScrollReveal delay={0.1}>
+          <div className="max-w-5xl mx-auto mb-16">
+            <div className="text-center mb-8">
+              <EyebrowTag label="The Problem" />
+              <p className="text-sm text-neutral-mid mt-2 max-w-md mx-auto">
+                What happens today vs. what ConvoBrains changes.
               </p>
             </div>
 
-            {/* Stat grid */}
-            <div className="mb-4">
-              <span
-                className="text-[10px] font-bold uppercase tracking-widest"
-                style={{ color: "#64748B" }}
-              >
-                Where the revenue is leaking — right now
-              </span>
+            <div className="grid md:grid-cols-2 gap-5">
+              {/* BEFORE */}
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <X className="w-4 h-4 text-red-500" />
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-red-600">Today</span>
+                </div>
+                <p className="text-sm text-navy leading-relaxed">{industry.meta.problem}</p>
+                <p className="text-xs text-red-500 mt-3 italic">{industry.meta.problemSub}</p>
+              </div>
+
+              {/* AFTER */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-600">With ConvoBrains</span>
+                </div>
+                <ul className="space-y-2">
+                  {["Every signal captured automatically", "AI extracts intent & opportunities", "Right action, right channel, right time"].map((t) => (
+                    <li key={t} className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                      <span className="text-sm text-navy">{t}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div className="grid sm:grid-cols-3 gap-4">
-              {industry.meta.stats.map((stat, i) => (
+          </div>
+        </ScrollReveal>
+
+        {/* Revenue Leaking Stats — compact horizontal cards */}
+        <ScrollReveal delay={0.2}>
+          <div className="text-center mb-6">
+            <EyebrowTag label="Revenue Leakage" />
+          </div>
+          <div className="grid sm:grid-cols-3 gap-4 max-w-5xl mx-auto">
+            {industry.meta.stats.map((stat, i) => {
+              const colors = ["text-red-600", "text-amber-600", "text-blue-600"];
+              const borders = ["border-l-red-500", "border-l-amber-500", "border-l-blue-500"];
+
+              return (
                 <div
                   key={i}
-                  className="rounded-xl p-5"
-                  style={{
-                    background: "#fff",
-                    border: "1px solid #E2E8F0",
-                  }}
+                  className={`bg-white border border-border ${borders[i % 3]} border-l-4 rounded-xl p-5 shadow-sm`}
                 >
-                  <div
-                    className="text-2xl md:text-3xl font-heading font-bold mb-2"
-                    style={{ color: "#1E40AF" }}
-                  >
+                  <span className={`text-2xl font-heading font-bold ${colors[i % 3]} block mb-1`}>
                     {stat.num}
-                  </div>
-                  <p className="text-sm leading-relaxed" style={{ color: "#1E40AF" }}>
+                  </span>
+                  <p className="text-xs text-neutral-mid leading-relaxed">
                     {stat.desc}
                   </p>
                 </div>
-              ))}
-            </div>
-          </ScrollReveal>
-        </div>
-      </div>
+              );
+            })}
+          </div>
+        </ScrollReveal>
+      </SectionWrapper>
 
       {/* ─── Journey explorer ─── */}
       <SectionWrapper bg="white">

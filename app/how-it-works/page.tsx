@@ -8,55 +8,80 @@ import {
   Mic,
   User,
   Zap,
-  PhoneIncoming,
+  Globe,
   Brain,
   Target,
   Send,
   BarChart3,
-  ArrowDown,
+  Smartphone,
+  Mail,
+  MessageSquare,
+  ShoppingCart,
+  Database,
 } from "lucide-react";
 
 const steps = [
   {
     phase: "Capture",
-    icon: <PhoneIncoming className="w-7 h-7" />,
-    title: "Customer reaches out",
-    oneLiner: "Call, chat, or web form — captured in real time.",
+    icon: <Globe className="w-7 h-7" />,
+    title: "Ingest every customer signal",
+    oneLiner:
+      "Voice calls, web sessions, mobile app events, WhatsApp chats, emails, SMS, CRM updates, and store transactions — all captured in real time through native connectors.",
+    sources: ["Voice", "Web", "App", "WhatsApp", "Email", "CRM"],
     color: "bg-blue-500",
   },
   {
-    phase: "Process",
-    icon: <Mic className="w-7 h-7" />,
-    title: "Conversation is analyzed",
-    oneLiner: "Intent, sentiment & key signals extracted instantly by AI.",
+    phase: "Unify",
+    icon: <User className="w-7 h-7" />,
+    title: "Resolve identity across channels",
+    oneLiner:
+      "Stitch anonymous clicks, named CRM records, call transcripts, and chat threads into one persistent customer profile — no manual mapping required.",
+    sources: ["Identity Resolution", "Cross-device"],
     color: "bg-indigo-500",
   },
   {
-    phase: "Enrich",
+    phase: "Understand",
     icon: <Brain className="w-7 h-7" />,
-    title: "Profile gets smarter",
-    oneLiner: "Every interaction deepens the customer's unified profile.",
+    title: "Extract intent, sentiment & context",
+    oneLiner:
+      "AI analyzes call transcripts, browsing patterns, purchase history, and chat conversations to surface intent signals, objections, churn risk, and upsell opportunities.",
+    sources: ["NLP", "Behavioral AI", "Scoring"],
     color: "bg-violet-500",
   },
   {
-    phase: "Decide",
-    icon: <Target className="w-7 h-7" />,
-    title: "AI picks the next best action",
-    oneLiner: "Right message, right channel, right time — automatically.",
+    phase: "Segment",
+    icon: <Database className="w-7 h-7" />,
+    title: "Build live, dynamic audiences",
+    oneLiner:
+      "Combine behavioral, transactional, and conversational attributes into segments that update in real time — RFM scoring, lifecycle stage, predicted LTV, and more.",
+    sources: ["RFM", "Predictive", "Lifecycle"],
     color: "bg-amber-500",
   },
   {
-    phase: "Act",
-    icon: <Send className="w-7 h-7" />,
-    title: "Action is triggered",
-    oneLiner: "WhatsApp, email, callback, or escalation — zero manual work.",
+    phase: "Orchestrate",
+    icon: <Target className="w-7 h-7" />,
+    title: "Decide the next best action",
+    oneLiner:
+      "AI evaluates every profile in context and picks the optimal action — a WhatsApp nudge, an email sequence, an agent callback, a personalized offer, or an ad retarget.",
+    sources: ["AI Decisioning", "Journey Builder"],
     color: "bg-emerald-500",
+  },
+  {
+    phase: "Execute",
+    icon: <Send className="w-7 h-7" />,
+    title: "Trigger across every channel",
+    oneLiner:
+      "Actions fire automatically — WhatsApp flows, email campaigns, SMS alerts, push notifications, ad audiences, or CRM task creation — zero manual work.",
+    sources: ["WhatsApp", "Email", "SMS", "Push", "Ads"],
+    color: "bg-teal-500",
   },
   {
     phase: "Measure",
     icon: <BarChart3 className="w-7 h-7" />,
-    title: "Outcomes feed back in",
-    oneLiner: "Every result improves the next decision. The loop never stops.",
+    title: "Learn and improve continuously",
+    oneLiner:
+      "Every outcome — opens, replies, conversions, renewals, churn events — feeds back into the intelligence engine, making every future decision smarter.",
+    sources: ["Closed-loop", "Auto-optimize"],
     color: "bg-rose-500",
   },
 ];
@@ -71,22 +96,65 @@ export default function HowItWorks() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <EyebrowTag label="How It Works" dark />
           <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-heading font-bold text-white leading-[1.1] mb-6">
-            From conversation
+            Every signal, one loop,
             <br />
-            <span className="text-accent">to conversion — in 6 steps</span>
+            <span className="text-accent">zero guesswork</span>
           </h1>
-          <p className="text-lg text-slate-300 max-w-xl mx-auto">
-            Every customer interaction flows through one intelligent loop.
+          <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+            ConvoBrains connects voice calls, web sessions, app events, chats,
+            emails, and CRM data into a single AI-powered loop that understands,
+            decides, and acts — automatically.
           </p>
         </div>
       </section>
 
+      {/* Channel bar */}
+      <SectionWrapper bg="surface">
+        <ScrollReveal>
+          <p className="text-center text-xs font-semibold uppercase tracking-widest text-neutral-mid mb-6">
+            Signals we process
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
+            {[
+              { icon: <Mic className="w-4 h-4" />, label: "Voice Calls" },
+              { icon: <Globe className="w-4 h-4" />, label: "Web Sessions" },
+              { icon: <Smartphone className="w-4 h-4" />, label: "Mobile App" },
+              { icon: <MessageSquare className="w-4 h-4" />, label: "WhatsApp & Chat" },
+              { icon: <Mail className="w-4 h-4" />, label: "Email" },
+              { icon: <ShoppingCart className="w-4 h-4" />, label: "Store & Orders" },
+              { icon: <Database className="w-4 h-4" />, label: "CRM Records" },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-white text-sm font-medium text-navy"
+              >
+                <span className="text-brand">{s.icon}</span>
+                {s.label}
+              </div>
+            ))}
+          </div>
+        </ScrollReveal>
+      </SectionWrapper>
+
       {/* Visual step flow */}
       <SectionWrapper bg="white">
+        <ScrollReveal>
+          <div className="text-center mb-14">
+            <EyebrowTag label="The Loop" />
+            <h2 className="text-3xl md:text-[40px] font-heading font-semibold text-navy leading-tight mb-3">
+              7 steps from raw signal to revenue
+            </h2>
+            <p className="text-neutral-mid max-w-xl mx-auto">
+              Not a linear funnel — a continuous feedback loop that gets smarter
+              with every customer interaction across every channel.
+            </p>
+          </div>
+        </ScrollReveal>
+
         <div className="max-w-4xl mx-auto">
           {steps.map((step, i) => (
             <ScrollReveal key={step.phase} delay={i * 0.06}>
-              <div className="flex items-center gap-5 md:gap-8">
+              <div className="flex items-start gap-5 md:gap-8">
                 {/* Icon circle */}
                 <div className="flex flex-col items-center shrink-0">
                   <div
@@ -97,7 +165,7 @@ export default function HowItWorks() {
                 </div>
 
                 {/* Content */}
-                <div className="py-4">
+                <div className="py-2">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                       {String(i + 1).padStart(2, "0")}
@@ -109,13 +177,24 @@ export default function HowItWorks() {
                   <h3 className="text-lg md:text-xl font-heading font-semibold text-navy">
                     {step.title}
                   </h3>
-                  <p className="text-sm text-neutral-mid mt-0.5">
+                  <p className="text-sm text-neutral-mid mt-1 leading-relaxed max-w-2xl">
                     {step.oneLiner}
                   </p>
+                  {/* Tag pills */}
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {step.sources.map((s) => (
+                      <span
+                        key={s}
+                        className="text-[10px] font-medium bg-neutral-light border border-border text-black py-1 px-2.5 rounded-full"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Connector arrow */}
+              {/* Connector */}
               {i < steps.length - 1 && (
                 <div className="flex items-center pl-6 md:pl-7 py-1">
                   <div className="w-px h-8 bg-border" />
@@ -134,7 +213,8 @@ export default function HowItWorks() {
               One continuous loop
             </h2>
             <p className="text-neutral-mid max-w-lg mx-auto">
-              Not a linear funnel — a feedback loop that gets smarter with every interaction.
+              Every channel feeds the same intelligence engine — the more
+              signals flow in, the smarter every action becomes.
             </p>
           </div>
         </ScrollReveal>
@@ -143,22 +223,22 @@ export default function HowItWorks() {
           <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
             {[
               {
-                icon: <Mic className="w-6 h-6" />,
+                icon: <Globe className="w-6 h-6" />,
                 label: "Capture",
-                stat: "Real-time",
-                desc: "Voice, chat & web",
+                stat: "Omnichannel",
+                desc: "Calls, web, app, chat, email & CRM",
               },
               {
-                icon: <User className="w-6 h-6" />,
-                label: "Profile",
-                stat: "Persistent",
-                desc: "Unified & always fresh",
+                icon: <Brain className="w-6 h-6" />,
+                label: "Understand",
+                stat: "AI-Powered",
+                desc: "Intent, sentiment & prediction",
               },
               {
                 icon: <Zap className="w-6 h-6" />,
                 label: "Act",
                 stat: "Automated",
-                desc: "Zero manual steps",
+                desc: "Right channel, right time, zero manual work",
               },
             ].map((item) => (
               <div
