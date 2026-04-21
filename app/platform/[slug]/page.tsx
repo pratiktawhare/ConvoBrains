@@ -698,7 +698,7 @@ export default async function PlatformFeatureSlugPage({
               <Button href="/demo" variant="primary" size="lg">
                 Book a Demo
               </Button>
-              <Button href="/platform" variant="ghost" size="lg">
+              <Button href="/platform" variant="outline" size="lg" className="!border-white/30 !text-white hover:!bg-white/10 hover:!border-white/50">
                 All Features
               </Button>
             </div>

@@ -9,73 +9,55 @@ import {
   User,
   Zap,
   PhoneIncoming,
-  MessageSquare,
   Brain,
   Target,
   Send,
   BarChart3,
+  ArrowDown,
 } from "lucide-react";
 
-const journeySteps = [
-  {
-    phase: "Inbound",
-    icon: <PhoneIncoming className="w-6 h-6" />,
-    title: "Customer reaches out",
-    description:
-      "A customer calls your support line, chats on WhatsApp, or fills out a web form. ConvoBrains captures the interaction in real time.",
-    detail:
-      "Our telephony integrations connect with Exotel, Ozonetel, Knowlarity, and any SIP-based system. Chat integrations cover WhatsApp Business API, website live chat, and Facebook Messenger.",
-    color: "brand",
-  },
+const steps = [
   {
     phase: "Capture",
-    icon: <Mic className="w-6 h-6" />,
-    title: "Every word is processed",
-    description:
-      "The call transcript or chat log is processed by our NLP engine within seconds. Key signals are extracted automatically.",
-    detail:
-      "We extract: budget mentions, timeline indicators, product preferences, competitor references, objections, sentiment shifts, and purchase intent scores — all without manual tagging.",
-    color: "brand",
+    icon: <PhoneIncoming className="w-7 h-7" />,
+    title: "Customer reaches out",
+    oneLiner: "Call, chat, or web form — captured in real time.",
+    color: "bg-blue-500",
+  },
+  {
+    phase: "Process",
+    icon: <Mic className="w-7 h-7" />,
+    title: "Conversation is analyzed",
+    oneLiner: "Intent, sentiment & key signals extracted instantly by AI.",
+    color: "bg-indigo-500",
   },
   {
     phase: "Enrich",
-    icon: <Brain className="w-6 h-6" />,
+    icon: <Brain className="w-7 h-7" />,
     title: "Profile gets smarter",
-    description:
-      "Extracted signals are fused into the customer's persistent profile. Every new interaction adds depth, never starts from zero.",
-    detail:
-      "The profile aggregates data from voice, chat, web behavior, CRM fields, and transaction history. RFM scores, engagement scores, and propensity models update in real time.",
-    color: "accent",
+    oneLiner: "Every interaction deepens the customer's unified profile.",
+    color: "bg-violet-500",
   },
   {
     phase: "Decide",
-    icon: <Target className="w-6 h-6" />,
-    title: "AI determines the next best action",
-    description:
-      "ConvoBrains' decisioning engine evaluates the profile and determines the optimal next action — send a message, schedule a callback, or escalate.",
-    detail:
-      "The decisioning engine uses propensity-to-buy scores, churn prediction models, and conversation momentum to pick the right action at the right time through the right channel.",
-    color: "accent",
+    icon: <Target className="w-7 h-7" />,
+    title: "AI picks the next best action",
+    oneLiner: "Right message, right channel, right time — automatically.",
+    color: "bg-amber-500",
   },
   {
     phase: "Act",
-    icon: <Send className="w-6 h-6" />,
-    title: "Action is triggered automatically",
-    description:
-      "A WhatsApp message is sent, an email campaign is triggered, a callback is scheduled, or a senior agent is flagged — all without human intervention.",
-    detail:
-      "Actions execute across WhatsApp, SMS, email, push notifications, and CRM task creation. Every action is logged back into the profile for the next interaction.",
-    color: "brand",
+    icon: <Send className="w-7 h-7" />,
+    title: "Action is triggered",
+    oneLiner: "WhatsApp, email, callback, or escalation — zero manual work.",
+    color: "bg-emerald-500",
   },
   {
     phase: "Measure",
-    icon: <BarChart3 className="w-6 h-6" />,
-    title: "Outcomes feed the loop",
-    description:
-      "Did the customer respond? Did they convert? Every outcome feeds back into the profile and improves future decisioning.",
-    detail:
-      "Closed-loop analytics connect conversation signals to revenue outcomes. Attribution models show which signals and actions drive the most conversions.",
-    color: "brand",
+    icon: <BarChart3 className="w-7 h-7" />,
+    title: "Outcomes feed back in",
+    oneLiner: "Every result improves the next decision. The loop never stops.",
+    color: "bg-rose-500",
   },
 ];
 
@@ -89,115 +71,110 @@ export default function HowItWorks() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <EyebrowTag label="How It Works" dark />
           <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-heading font-bold text-white leading-[1.1] mb-6">
-            The journey from
+            From conversation
             <br />
-            <span className="text-accent">conversation to conversion</span>
+            <span className="text-accent">to conversion — in 6 steps</span>
           </h1>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto mb-8">
-            Follow a single customer interaction through the ConvoBrains
-            platform — from the first ring to the final conversion.
+          <p className="text-lg text-slate-300 max-w-xl mx-auto">
+            Every customer interaction flows through one intelligent loop.
           </p>
         </div>
       </section>
 
-      {/* Interactive journey */}
+      {/* Visual step flow */}
       <SectionWrapper bg="white">
-        <div className="max-w-3xl mx-auto">
-          {journeySteps.map((step, i) => (
-            <ScrollReveal key={step.phase} delay={i * 0.08}>
-              <div className="relative pl-12 md:pl-16 pb-12 last:pb-0">
-                {/* Vertical line */}
-                {i < journeySteps.length - 1 && (
-                  <div className="absolute left-5 md:left-7 top-14 bottom-0 w-px bg-gradient-to-b from-brand/30 to-border" />
-                )}
-
-                {/* Step circle */}
-                <div
-                  className={`absolute left-0 md:left-2 top-0 w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center ${
-                    step.color === "accent"
-                      ? "bg-accent/10 text-accent"
-                      : "bg-brand/10 text-brand"
-                  }`}
-                >
-                  {step.icon}
+        <div className="max-w-4xl mx-auto">
+          {steps.map((step, i) => (
+            <ScrollReveal key={step.phase} delay={i * 0.06}>
+              <div className="flex items-center gap-5 md:gap-8">
+                {/* Icon circle */}
+                <div className="flex flex-col items-center shrink-0">
+                  <div
+                    className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl ${step.color} flex items-center justify-center text-white shadow-lg`}
+                  >
+                    {step.icon}
+                  </div>
                 </div>
 
-                <div className="bg-neutral-light rounded-2xl border border-border p-6 md:p-8 hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[10px] uppercase tracking-widest font-semibold text-brand bg-brand/10 px-2 py-0.5 rounded-md">
+                {/* Content */}
+                <div className="py-4">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-brand">
                       {step.phase}
                     </span>
-                    <span className="text-[10px] text-slate-400">
-                      Step {String(i + 1).padStart(2, "0")}
-                    </span>
                   </div>
-                  <h3 className="text-xl font-heading font-semibold text-navy mb-2">
+                  <h3 className="text-lg md:text-xl font-heading font-semibold text-navy">
                     {step.title}
                   </h3>
-                  <p className="text-neutral-mid leading-relaxed mb-4">
-                    {step.description}
+                  <p className="text-sm text-neutral-mid mt-0.5">
+                    {step.oneLiner}
                   </p>
-                  <div className="bg-white rounded-xl border border-border p-4">
-                    <div className="text-xs font-medium text-slate-400 uppercase tracking-widest mb-1.5">
-                      Under the hood
-                    </div>
-                    <p className="text-sm text-neutral-mid leading-relaxed">
-                      {step.detail}
-                    </p>
-                  </div>
                 </div>
               </div>
+
+              {/* Connector arrow */}
+              {i < steps.length - 1 && (
+                <div className="flex items-center pl-6 md:pl-7 py-1">
+                  <div className="w-px h-8 bg-border" />
+                </div>
+              )}
             </ScrollReveal>
           ))}
         </div>
       </SectionWrapper>
 
-      {/* Visual summary */}
+      {/* Visual summary — 3 pillars */}
       <SectionWrapper bg="gray">
         <ScrollReveal>
-          <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-[40px] font-heading font-semibold text-navy leading-tight mb-4">
-              A continuous intelligence loop
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-[40px] font-heading font-semibold text-navy leading-tight mb-3">
+              One continuous loop
             </h2>
-            <p className="text-neutral-mid max-w-2xl mx-auto">
-              Unlike linear funnels, ConvoBrains runs a persistent feedback loop
-              — every customer interaction makes the next one smarter.
+            <p className="text-neutral-mid max-w-lg mx-auto">
+              Not a linear funnel — a feedback loop that gets smarter with every interaction.
             </p>
           </div>
         </ScrollReveal>
 
-        <ScrollReveal delay={0.2}>
+        <ScrollReveal delay={0.15}>
           <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
             {[
               {
                 icon: <Mic className="w-6 h-6" />,
                 label: "Capture",
                 stat: "Real-time",
+                desc: "Voice, chat & web",
               },
               {
                 icon: <User className="w-6 h-6" />,
                 label: "Profile",
                 stat: "Persistent",
+                desc: "Unified & always fresh",
               },
               {
                 icon: <Zap className="w-6 h-6" />,
                 label: "Act",
                 stat: "Automated",
+                desc: "Zero manual steps",
               },
             ].map((item) => (
               <div
                 key={item.label}
                 className="bg-white rounded-2xl border border-border p-6 text-center shadow-sm"
               >
-                <div className="w-12 h-12 rounded-2xl bg-brand/10 flex items-center justify-center mx-auto mb-4 text-brand">
+                <div className="w-12 h-12 rounded-2xl bg-brand/10 flex items-center justify-center mx-auto mb-3 text-brand">
                   {item.icon}
                 </div>
-                <div className="text-lg font-heading font-semibold text-navy mb-1">
+                <div className="text-lg font-heading font-semibold text-navy">
                   {item.label}
                 </div>
-                <div className="text-sm text-brand font-medium">
+                <div className="text-sm text-brand font-medium mb-1">
                   {item.stat}
                 </div>
+                <div className="text-xs text-neutral-mid">{item.desc}</div>
               </div>
             ))}
           </div>

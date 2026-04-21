@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ConvoBrains · CDP Explorer</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;background:#fff;font-size:14px}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid #f0ede8;background:#fff;position:sticky;top:0;z-index:10}
+.logo{font-size:16px;font-weight:600;letter-spacing:-.3px}.logo span{color:#1D9E75}
+.nav-tabs{display:flex;gap:2px;background:#f5f3ef;border-radius:8px;padding:3px}
+.ntab{font-size:12px;padding:5px 14px;border-radius:6px;border:none;background:none;color:#888;cursor:pointer;font-weight:500;transition:all .15s}
+.ntab.on{background:#fff;color:#1a1a1a;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.page{display:none}.page.active{display:block}
+
+/* HERO */
+.hero{padding:40px 28px 28px;border-bottom:1px solid #f0ede8;background:#fafaf8}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;margin-bottom:14px;letter-spacing:.02em}
+.chip-green{background:#E1F5EE;color:#085041}.chip-purple{background:#EEEDFE;color:#3C3489}.chip-blue{background:#E6F1FB;color:#0C447C}
+.dot-green{width:6px;height:6px;border-radius:50%;background:#1D9E75}
+.dot-purple{width:6px;height:6px;border-radius:50%;background:#7F77DD}
+.dot-blue{width:6px;height:6px;border-radius:50%;background:#378ADD}
+.hero h1{font-size:28px;font-weight:700;line-height:1.2;max-width:520px;margin-bottom:10px;letter-spacing:-.5px}
+.hero h1 em{font-style:normal;color:#1D9E75}
+.hero p{font-size:14px;color:#666;max-width:480px;line-height:1.65}
+
+/* SELECTORS */
+.sel-row{display:flex;gap:10px;padding:16px 28px;border-bottom:1px solid #f0ede8;align-items:flex-end;flex-wrap:wrap}
+.sel-grp{display:flex;flex-direction:column;gap:5px;flex:1;min-width:200px}
+.sel-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#aaa}
+select{font-family:inherit;font-size:13px;padding:8px 12px;border:1px solid #e0ddd8;border-radius:8px;background:#fff;color:#1a1a1a;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+select:focus{outline:none;border-color:#1D9E75}
+select:disabled{color:#bbb;cursor:not-allowed;background-color:#fafaf8}
+
+/* FLOW BUTTONS */
+.flow-row{display:flex;gap:0;padding:20px 28px 0}
+.fbtn{font-size:12px;font-weight:600;padding:8px 18px;border:1px solid #e0ddd8;background:#fff;color:#888;cursor:pointer;transition:all .15s;letter-spacing:.01em}
+.fbtn:first-child{border-radius:8px 0 0 8px}.fbtn:last-child{border-radius:0 8px 8px 0}
+.fbtn.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.fbtn.lapsed-btn.on{background:#7A3B00;border-color:#7A3B00;color:#fff}
+
+/* JOURNEY SNAKE */
+.jwrap{padding:24px 28px 0}
+.jlabel{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#aaa;margin-bottom:16px}
+.row{display:flex;gap:10px;margin-bottom:10px}
+.row.rev{flex-direction:row-reverse}
+.step{flex:1;min-width:0;border:1px solid #ede9e4;border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;background:#fff}
+.step:hover{border-color:#bbb;background:#fafaf8}
+.step.on{border-color:#1D9E75;background:#f0fbf6}
+.snum{font-size:10px;font-weight:700;color:#bbb;margin-bottom:4px;letter-spacing:.06em;text-transform:uppercase}
+.stitle{font-size:13px;font-weight:700;margin-bottom:3px;line-height:1.3;color:#1a1a1a}
+.ssub{font-size:11px;color:#888;line-height:1.4}
+.stag{display:inline-block;font-size:10px;padding:3px 8px;border-radius:20px;margin-top:7px;font-weight:700;letter-spacing:.02em}
+.tw{background:#E1F5EE;color:#085041}
+.ts{background:#f0ede8;color:#666}
+.tk{background:#EEEDFE;color:#3C3489}
+.tl{background:#FFF0E0;color:#7A3B00}
+.conn{display:flex;justify-content:flex-end;padding:0 6px;margin-bottom:10px}
+.conn.rev{justify-content:flex-start}
+.carr{width:16px;height:16px;border-right:2px solid #ddd;border-bottom:2px solid #ddd;border-radius:0 0 4px 0}
+.carr.l{border-right:none;border-left:2px solid #ddd;border-radius:0 0 0 4px}
+
+/* DETAIL PANEL */
+.det{display:none;background:#f8f7f4;border:1px solid #e8e4de;border-radius:14px;padding:20px 22px;margin-bottom:14px}
+.det.show{display:block;animation:si .2s ease}
+@keyframes si{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.dhead{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.dtitle{font-size:15px;font-weight:700;color:#1a1a1a}
+.dclose{border:none;background:none;font-size:20px;color:#bbb;cursor:pointer;line-height:1;padding:0 2px}
+.dclose:hover{color:#666}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.dbox{background:#fff;border:1px solid #ede9e4;border-radius:10px;padding:12px 14px}
+.dlbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#bbb;margin-bottom:5px}
+.dval{font-size:13px;color:#555;line-height:1.55}
+.exstrip{background:#E1F5EE;border:1px solid #9FE1CB;border-radius:10px;padding:12px 14px;display:flex;gap:10px;margin-bottom:8px;align-items:flex-start}
+.expill{font-size:10px;font-weight:700;color:#085041;background:#9FE1CB;padding:3px 9px;border-radius:20px;flex-shrink:0;white-space:nowrap;letter-spacing:.04em}
+.extext{font-size:13px;color:#085041;line-height:1.55}
+.sellstrip{background:#fff;border:1px solid #e0ddd8;border-left:4px solid #1D9E75;border-radius:10px;padding:12px 14px}
+.selllbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#1D9E75;margin-bottom:4px}
+.sellval{font-size:13px;color:#1a1a1a;font-style:italic;line-height:1.55}
+
+/* CHANNEL BADGE */
+.cbadge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;margin-left:8px;vertical-align:middle}
+.cbadge-v{background:#E1F5EE;color:#085041;border:1px solid #5DCAA5}
+.cbadge-nv{background:#EEEDFE;color:#3C3489;border:1px solid #7F77DD}
+.cbadge-b{background:#E6F1FB;color:#0C447C;border:1px solid #85B7EB}
+
+/* INDUSTRY HEADER */
+.ind-bar{padding:20px 28px 12px;border-bottom:1px solid #f0ede8;background:#fafaf8}
+.ind-title{font-size:18px;font-weight:700;margin-bottom:4px;letter-spacing:-.3px}
+.ind-sub{font-size:13px;color:#666;line-height:1.6;max-width:500px}
+
+/* TOUCHPOINTS */
+.tps{display:flex;flex-wrap:wrap;gap:6px;padding:12px 28px 0;background:#fafaf8;border-bottom:1px solid #f0ede8;padding-bottom:12px}
+.tp{font-size:11px;padding:4px 10px;border-radius:20px;background:#fff;border:1px solid #e0ddd8;color:#666}
+
+/* EMPTY */
+.empty-state{padding:48px 28px;text-align:center;color:#aaa;font-size:13px}
+/* INDUSTRY PROBLEM STATEMENT */
+.ind-problem{background:#fff8f0;border:1px solid #f0c070;border-left:4px solid #BA7517;border-radius:10px;padding:14px 18px;margin:16px 28px 0}
+.ind-problem-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#854F0B;margin-bottom:6px}
+.ind-problem-stmt{font-size:14px;color:#1a1a1a;font-weight:600;line-height:1.5;margin-bottom:4px}
+.ind-problem-sub{font-size:12px;color:#854F0B;line-height:1.5}
+
+/* SO WHAT BOX */
+.sowhat{background:#f0fbf6;border:1px solid #5DCAA5;border-left:4px solid #1D9E75;border-radius:10px;padding:14px 18px;margin:12px 28px 16px}
+.sowhat-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#085041;margin-bottom:8px}
+.sowhat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:600px){.sowhat-grid{grid-template-columns:1fr}}
+.sowhat-stat{background:#fff;border:1px solid #9FE1CB;border-radius:8px;padding:10px 12px}
+.sowhat-num{font-size:18px;font-weight:700;color:#085041;margin-bottom:2px}
+.sowhat-desc{font-size:11px;color:#0F6E56;line-height:1.4}
+
+.empty-state .big{font-size:32px;margin-bottom:10px}
+
+/* PROBLEM LIBRARY */
+.probpage{padding:0 28px 40px}
+.phero{padding:32px 0 20px;border-bottom:1px solid #f0ede8;margin-bottom:20px}
+.phero h2{font-size:22px;font-weight:700;margin-bottom:5px;letter-spacing:-.3px}
+.phero p{font-size:13px;color:#888}
+.fbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.flbl{font-size:11px;color:#aaa;font-weight:600;letter-spacing:.04em}
+.fp{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid #e0ddd8;background:#fff;color:#888;cursor:pointer;font-weight:500;transition:all .15s}
+.fp.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.sep{width:1px;height:16px;background:#e8e4de;margin:0 2px}
+.pcat{margin-bottom:20px}
+.pchead{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.pclbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border-radius:20px}
+.pccnt{font-size:11px;color:#bbb}
+.pc{background:#fff;border:1px solid #ede9e4;border-radius:12px;padding:14px 16px;margin-bottom:6px;cursor:pointer;transition:all .15s}
+.pc:hover{border-color:#ccc}.pc.open{border-color:#1a1a1a}
+.pcstmt{font-size:13px;line-height:1.45;margin-bottom:7px;color:#1a1a1a;font-weight:500}
+.pctags{display:flex;gap:4px;flex-wrap:wrap}
+.pt{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600}
+.pt-n{background:#E1F5EE;color:#085041}.pt-r{background:#E6F1FB;color:#0C447C}
+.pt-h{background:#FCEBEB;color:#791F1F}.pt-m{background:#FAEEDA;color:#633806}
+.pt-v{background:#E1F5EE;color:#085041;border:1px solid #5DCAA5}
+.pt-nv{background:#EEEDFE;color:#3C3489;border:1px solid #9F9AE5}
+.pt-b{background:#E6F1FB;color:#0C447C;border:1px solid #85B7EB}
+.pcdet{display:none;margin-top:12px;padding-top:12px;border-top:1px solid #ede9e4}
+.pcdet.show{display:block}
+.pdg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:7px}
+.pdb{background:#f8f7f4;border-radius:8px;padding:10px 12px}
+.pdl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#bbb;margin-bottom:3px}
+.pdv{font-size:12px;color:#666;line-height:1.5}
+.pds{background:#f8f7f4;border-radius:8px;padding:10px 12px;border-left:3px solid #1D9E75}
+.pdsl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#1D9E75;margin-bottom:3px}
+.pdsv{font-size:13px;color:#1a1a1a;font-style:italic;line-height:1.5}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="logo">Convo<span>Brains</span> <span style="font-size:11px;color:#aaa;font-weight:400;margin-left:4px">· CDP explorer</span></div>
+  <div class="nav-tabs">
+    <button class="ntab on" onclick="showPage('journey',this)">Customer journey</button>
+    <button class="ntab" onclick="showPage('problems',this)">Problem library</button>
+  </div>
+</nav>
+
+<!-- JOURNEY PAGE -->
+<div class="page active" id="page-journey">
+  <div class="hero">
+    <div class="chip chip-green"><div class="dot-green"></div>ConvoBrains CDP · all channels, all industries</div>
+    <h1>Every signal builds a profile.<br><em>Every profile fires an action.</em></h1>
+    <p>Explore how ConvoBrains activates customer data across voice, non-voice, and omnichannel setups — and where our differentiation is strongest in each.</p>
+  </div>
+
+  <div class="sel-row">
+    <div class="sel-grp">
+      <div class="sel-lbl">CDP type</div>
+      <select id="sel-cdp" onchange="onCdpChange()">
+        <option value="">— select CDP type —</option>
+        <option value="nonvoice">Non-voice (app / email / push / ads)</option>
+        <option value="voice">Voice + chat (calls / WhatsApp / live chat)</option>
+        <option value="both">Both channels (non-voice + voice)</option>
+      </select>
+    </div>
+    <div class="sel-grp">
+      <div class="sel-lbl">Industry</div>
+      <select id="sel-industry" onchange="onIndustryChange()" disabled>
+        <option value="">— select CDP type first —</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="journey-body">
+    <div class="empty-state">
+      <div class="big">↑</div>
+      Select a CDP type and industry above to explore the customer journey
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEMS PAGE -->
+<div class="page" id="page-problems">
+  <div class="probpage">
+    <div class="phero">
+      <h2>Problem library</h2>
+      <p>Problems across all channels and industries — filter by customer type, channel, and priority.</p>
+    </div>
+    <div class="fbar">
+      <span class="flbl">Customer</span>
+      <button class="fp on" onclick="setFS('all',this)">All</button>
+      <button class="fp" onclick="setFS('new',this)">New</button>
+      <button class="fp" onclick="setFS('returning',this)">Returning</button>
+      <div class="sep"></div>
+      <span class="flbl">Channel</span>
+      <button class="fp on" onclick="setFC('all',this)">All</button>
+      <button class="fp" onclick="setFC('voice',this)">Voice</button>
+      <button class="fp" onclick="setFC('nonvoice',this)">Non-voice</button>
+      <button class="fp" onclick="setFC('both',this)">Both</button>
+      <div class="sep"></div>
+      <span class="flbl">Priority</span>
+      <button class="fp on" onclick="setFP('all',this)">All</button>
+      <button class="fp" onclick="setFP('high',this)">High</button>
+      <button class="fp" onclick="setFP('med',this)">Medium</button>
+    </div>
+    <div id="prob-area"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   tag: 'tw'=We differentiate  'ts'=Not our wedge  'tk'=Core wedge/activation
+   For non-voice use tagLabels: 'We differentiate', 'Not our wedge', 'Core activation'
+   For voice/both use: 'We differentiate', 'Not our wedge', 'Core wedge'
+============================================================ */
+
+const DATA = {
+
+/* ============================  NON-VOICE  ============================ */
+nonvoice: {
+  label:'Non-voice CDP', badge:'cbadge-nv', badgeText:'Non-voice',
+  newLabel:'First-time', retLabel:'Repeat',
+  hasNewRet: false,
+  industries:{
+    ecommerce:{
+      name:'E-commerce / DTC retail',
+      tagline:'Turn browsing signals and purchase history into personalised re-engagement — without a single phone call.',
+      touchpoints:['Cart abandonment email','Browse retargeting ads','Lapsed buyer push','Replenishment reminder','Price drop alert','Wishlist nudge','Post-purchase upsell'],
+      new:[
+        {t:'Anonymous browse',s:'User lands, browses, no login',tag:'ts',tl:'Not our wedge',prob:'No identity — just a cookie. No conversation to mine.',does:'We flag this honestly. Our value starts at the first known interaction.',ex:'User browses sneakers three times. No login, no signal for us yet.',sell:'"We\'re honest: anonymous traffic isn\'t where we add value. The moment they identify — that\'s us."'},
+        {t:'Cart abandonment',s:'Item added, checkout not completed',tag:'tk',tl:'Core activation',prob:'Generic "you left something behind" email goes to every abandoner equally.',does:'Behavioural profile scores intent. High-intent gets a direct discount trigger. Hesitant gets a social proof email. First-time gets a trust-building sequence.',ex:'User added ₹3200 sneakers, viewed returns policy twice. ConvoBrains sends: "Free returns, no questions asked" — not a discount.',sell:'"Not every cart abandoner needs 10% off. Some just needed reassurance."'},
+        {t:'Browse retargeting',s:'Product views without purchase',tag:'tw',tl:'We differentiate',prob:'Retargeting ads show the exact product they viewed. CTR is low, frequency is annoying.',does:'Category affinity profile fires complementary product ads. Viewed 3 running shoes — serve trail shorts and socks, not the same shoe.',ex:'User browsed 4 protein powders. Retargeting serves the protein shaker bundle, not another powder ad.',sell:'"Showing people what they already decided not to buy is not retargeting. It\'s stalking."'},
+        {t:'First purchase',s:'Order placed',tag:'tk',tl:'Core activation',prob:'Thank-you email is the same for a ₹300 buyer and a ₹3000 buyer.',does:'Purchase value, category, and browsing depth create a post-purchase profile. Upsell and loyalty messages are sized to match.',ex:'₹2800 first skincare order. ConvoBrains triggers: loyalty enrolment + complementary product email at day 3, not day 0.',sell:'"Your best first-time buyers get the same email as someone who bought lip balm."'},
+        {t:'Post-purchase silence',s:'No repeat order in 45 days',tag:'tw',tl:'We differentiate',prob:'Day 30 re-engagement blast goes to everyone equally.',does:'Replenishment window predicted from category + purchase size. Push fires at the right moment per product type.',ex:'User bought 30-day protein supply on day 1. ConvoBrains fires a replenishment push on day 27 — not day 30 generic blast.',sell:'"If they bought a 30-day supply, you know exactly when they\'ll run out."'},
+        {t:'Price drop / back-in-stock',s:'Wishlist or view signal exists',tag:'tw',tl:'We differentiate',prob:'Price drop alerts go to everyone who ever viewed a product.',does:'Profile filters: high-intent wishlisters get instant push. Low-intent viewers get email. Price-sensitive profile gets the drop highlighted.',ex:'User viewed a jacket 4 times, added to wishlist. Price drops ₹500. Instant push: "your wishlist item just dropped."',sell:'"A price drop alert is most powerful to the person who almost bought it. You\'re sending it to everyone."'},
+        {t:'Lapsed buyer win-back',s:'No order in 90+ days',tag:'tk',tl:'Core activation',prob:'Same discount blast to all lapsed buyers. No understanding of why they lapsed.',does:'Exit profile built from last browse + purchase pattern. Category shift, competitor hint, or price sensitivity — each gets a different message.',ex:'Last purchase was in sale period. Lapse happened post-sale. ConvoBrains waits for next sale event to re-engage — not a mid-season blast.',sell:'"Some lapsed buyers are just waiting for your next sale. You\'re wasting margins on mid-season win-backs."'},
+      ]
+    },
+    subbox:{
+      name:'Subscription boxes & CPG',
+      tagline:'Detect churn risk before it hits cancellation and retain subscribers with behaviour-matched interventions.',
+      touchpoints:['Churn-risk SMS','Skip-detection email','Pause-to-cancel intervention','Loyalty tier reminder','Replenishment nudge','Customisation prompt'],
+      steps:[
+        {t:'Skip signal',s:'Subscriber skips a delivery',tag:'tk',tl:'Core activation',prob:'Skip is treated as neutral. No follow-up, no investigation.',does:'First skip is monitored. Second skip in a row triggers a satisfaction check. Profile tags: overstock, dissatisfaction, or lifestyle change.',ex:'Subscriber skips month 2 and 3. ConvoBrains sends a curation refresh prompt: "Has your taste changed? Update your preferences." Not a skip reminder.',sell:'"Two skips in a row is a churn signal, not an inventory preference."'},
+        {t:'Pause request',s:'Subscriber pauses subscription',tag:'tk',tl:'Core activation',prob:'Pause accepted. No attempt to understand reason or intervene.',does:'Pause reason — price, travel, overstock — shapes the intervention. Overstock pause gets a "skip next, not pause" nudge. Price pause gets a downgrade option.',ex:'User pauses citing "too much stuff." ConvoBrains offers: "Skip the next 2 months instead — your subscription stays active, no charge."',sell:'"A pause is easier to reverse than a cancel. Most brands treat them the same."'},
+        {t:'Cancel attempt',s:'Cancellation flow started',tag:'tk',tl:'Core activation',prob:'Cancel flow shows one generic retention offer.',does:'Full behaviour profile informs the retention offer. Long-tenure subscriber gets a loyalty acknowledgement. Recent joiner gets a curation promise. Price-citer gets a plan downgrade.',ex:'12-month subscriber starts cancelling. Offer: "You\'ve been with us for a year — here\'s a loyalty pause with no charge for 2 months."',sell:'"A 12-month subscriber who cancels deserves a different conversation than someone who signed up last week."'},
+        {t:'Post-box silence',s:'No engagement after delivery',tag:'tw',tl:'We differentiate',prob:'Delivery confirmed, nothing happens.',does:'No-engagement after delivery is a dissatisfaction signal. A review request + curation refresh fires before the next box.',ex:'Box delivered, no social share, no review, no app open. ConvoBrains sends: "How\'d we do? Tell us what to swap next time."',sell:'"An unboxing that generates zero engagement is a warning. You\'re not listening to it."'},
+        {t:'Lapsed or churned subscriber',s:'Cancelled 60+ days ago',tag:'tk',tl:'Core activation',prob:'Generic come-back discount. No personalisation.',does:'Exit reason profile shapes win-back. Price exit gets a new plan offer. Curation exit gets a "meet your new curator" message. Lifestyle change gets a season-relevant re-invite.',ex:'Subscriber left citing poor curation fit. Win-back: "We rebuilt how we match products to your preferences — here\'s a free first box on us."',sell:'"You\'re offering discounts to someone who left because the product didn\'t fit them. Price wasn\'t the problem."'},
+      ]
+    },
+    beauty:{
+      name:'Beauty & personal care',
+      tagline:'Drive replenishment, loyalty, and cross-sell through purchase pattern intelligence — no call centre needed.',
+      touchpoints:['Replenishment push','Loyalty points expiry','New product personalised email','Post-purchase cross-sell','Skin quiz re-engagement','Birthday offer'],
+      steps:[
+        {t:'First purchase',s:'Skincare, haircare, or makeup order',tag:'tw',tl:'We differentiate',prob:'Same thank-you email regardless of category or spend.',does:'Category, skin type tags (from quiz or product choice), and order value shape the post-purchase sequence.',ex:'User buys a Vitamin C serum. ConvoBrains fires: day 3 usage tips, day 14 "how\'s your glow?" check-in, day 28 replenishment prediction.',sell:'"Someone who bought a serum needs a usage journey, not a generic thank-you."'},
+        {t:'Replenishment window',s:'Product lifecycle nearing end',tag:'tk',tl:'Core activation',prob:'Replenishment reminder on a fixed 30-day schedule regardless of product.',does:'Product volume + category usage rate predicts replenishment window per SKU. Serum fires at day 45. Shampoo fires at day 28.',ex:'User bought a 50ml serum. Usage rate for that SKU is 42 days. Push fires on day 39: "Your serum is probably running low."',sell:'"A moisturiser runs out in 2 months. A lip balm in 3 weeks. Your reminder schedule doesn\'t know the difference."'},
+        {t:'Loyalty points expiry',s:'Points about to lapse',tag:'tw',tl:'We differentiate',prob:'Expiry reminder goes to everyone equally. No spend nudge.',does:'Points value + purchase history compute the best redemption suggestion. High-spend user gets a premium product hint. Occasional buyer gets the easiest redemption path.',ex:'User has 420 points, buys face wash regularly. Email: "You\'re 80 points from a free face wash — one order away."',sell:'"Telling someone they have expiring points isn\'t enough. Tell them what they can get with them."'},
+        {t:'Cross-sell opportunity',s:'Purchased one category, adjacent not tried',tag:'tk',tl:'Core activation',prob:'Cross-sell emails show bestsellers, not profile-matched products.',does:'Category ownership map identifies the biggest adjacent gap. Skincare buyer who hasn\'t bought SPF gets SPF cross-sell. Hair buyer who hasn\'t bought conditioner gets conditioner nudge.',ex:'User has bought face wash, serum, and toner. Never bought SPF. Email: "Your routine is missing one step — the most important one."',sell:'"You know exactly which step in their routine is missing. Your email shows them your top 10 products."'},
+        {t:'Lapsed buyer',s:'No order in 75 days',tag:'tk',tl:'Core activation',prob:'Generic win-back discount to all lapsed buyers.',does:'Replenishment overdue signal + category preference shape the win-back. Replenishment lapse gets a restocking angle. Category shift gets a new launch in their preferred range.',ex:'User\'s serum replenishment is 15 days overdue. Win-back: "Still using your old serum? Time to restock — here\'s 15% off." Not a generic sale email.',sell:'"A lapsed buyer whose product ran out 2 weeks ago needs a restock nudge, not a comeback discount."'},
+      ]
+    },
+    food:{
+      name:'Food delivery & QSR apps',
+      tagline:'Re-engage dormant orderers and grow frequency with geo-triggered and craving-matched messaging.',
+      touchpoints:['Dormant orderer push','Favourite item back-in-stock','Geo-triggered promo','Free delivery win-back','Reorder reminder','Lunch hour nudge'],
+      steps:[
+        {t:'Active user goes quiet',s:'No order in 10 days',tag:'tk',tl:'Core activation',prob:'"We miss your appetite" push to every dormant user.',does:'Last order category, time of day, and frequency pattern shape the reactivation push.',ex:'User always orders biryani on Friday evenings. Thursday push: "Friday biryani mood? Order by 7pm, 20% off."',sell:'"A user who orders every Friday at 7pm and goes quiet needs a very different message than someone who orders randomly."'},
+        {t:'Geo-trigger',s:'User near a partner restaurant',tag:'tw',tl:'We differentiate',prob:'Location-based push goes to all users near any partner. Irrelevant noise.',does:'Geo-trigger cross-referenced with cuisine preference profile. Only fires when location overlaps with a preferred cuisine or past-ordered restaurant.',ex:'User has ordered from Italian 6 times. Walks past Pasta Bar. Push: "You\'re 2 mins from your favourite pasta place — lunchtime?"',sell:'"A geo push that matches what you love feels like local knowledge. One that doesn\'t is spam."'},
+        {t:'Favourite item signal',s:'Previously ordered item viewed but not ordered',tag:'tw',tl:'We differentiate',prob:'Back-in-stock alerts go to all who\'ve ever ordered an item.',does:'Recency + frequency of past orders scores notification value. Recent heavy orderer gets instant push. Occasional orderer gets a weekly digest mention.',ex:'User ordered butter chicken 8 times. Restaurant was unavailable for a week. Returns: "Your butter chicken is back."',sell:'"The person who ordered it 8 times cares about the return. The person who ordered it once probably forgot."'},
+        {t:'Free delivery window',s:'Promotional free delivery threshold',tag:'tk',tl:'Core activation',prob:'Free delivery promo announced to all users equally.',does:'Order frequency and average basket size predict who\'ll convert on free delivery vs who\'ll ignore it.',ex:'High-frequency user with ₹250 average basket. Free delivery above ₹299. Push: "₹49 away from free delivery — add raita?"',sell:'"A nudge that tells someone exactly what to add to cross the threshold is a feature. A general free delivery push is noise."'},
+        {t:'Lapsed orderer',s:'No order in 30+ days',tag:'tk',tl:'Core activation',prob:'Free delivery or discount to all lapsed users.',does:'Last order sentiment (rating), cuisine preference, and lapse timing shape win-back.',ex:'User gave 2-star rating on last order. Win-back doesn\'t lead with discount — leads with: "We\'ve fixed what went wrong. Try again on us."',sell:'"Someone who gave 2 stars didn\'t need a discount. They needed an apology and a guarantee."'},
+      ]
+    },
+    edtech:{
+      name:'EdTech & online learning',
+      tagline:'Re-engage learners who stalled mid-course with streak-aware, goal-matched nudges — not generic push blasts.',
+      touchpoints:['Course-abandoned email','Streak-broken push','Certificate nudge','Cohort re-enrolment','Quiz reminder','Learning goal check-in'],
+      steps:[
+        {t:'Course started, then stalled',s:'No progress in 7 days',tag:'tk',tl:'Core activation',prob:'Same "keep learning" push to all stalled learners.',does:'Stall point in curriculum + topic difficulty + time-of-day pattern shape the re-engagement.',ex:'Learner stalled on module 4 of Python — historically the hardest module. Push: "Module 4 trips everyone up — here\'s a 5-min shortcut video."',sell:'"The learner who stalled on the hardest module needs a lifeline, not a motivational quote."'},
+        {t:'Streak break',s:'Daily learning habit broken',tag:'tw',tl:'We differentiate',prob:'Streak-break notification is the same for a 3-day streak and a 90-day streak.',does:'Streak length and learning investment shape the urgency of the recovery message.',ex:'Learner had a 67-day streak. Break happened. Push: "67 days — that\'s your longest streak ever. Don\'t let day 68 be the gap."',sell:'"Someone who broke a 67-day streak is devastated. Someone who broke a 3-day streak needs a different tone entirely."'},
+        {t:'Certificate proximity',s:'80%+ course completion',tag:'tk',tl:'Core activation',prob:'No proactive nudge for learners close to completion.',does:'Completion proximity trigger fires at 80%, 90%, and 95% with escalating urgency and social proof.',ex:'Learner at 88% of a data science course. Push: "You\'re 3 lessons from your certificate. Most people at 88% finish within a week."',sell:'"The hardest part of finishing a course is the last 20%. You\'re not there for it."'},
+        {t:'Cohort deadline approaching',s:'Live cohort or assignment due',tag:'tw',tl:'We differentiate',prob:'Same deadline reminder to all cohort members regardless of progress.',does:'Progress level shapes reminder urgency. 90% done gets a light nudge. 40% done gets a study plan suggestion.',ex:'Learner at 35% with 5 days to cohort end. Not just a reminder — ConvoBrains sends a "catch-up plan: 2 modules/day."',sell:'"A blanket deadline reminder isn\'t helpful to someone who\'s 35% through with 5 days left. A plan is."'},
+        {t:'Lapsed learner',s:'No login in 30 days',tag:'tk',tl:'Core activation',prob:'Generic "your course is waiting" email.',does:'Course category, career goal (if stated), and lapse timing shape win-back. Job market signal for their target role triggers re-engagement.',ex:'Learner was studying UX design. Surge in UX job postings detected. Email: "UX roles are up 28% this month — your certificate is 60% done."',sell:'"A learner who wants a job doesn\'t need motivation. They need to know the market is hot right now."'},
+      ]
+    },
+  }
+},
+
+/* ============================  VOICE  ============================ */
+voice: {
+  label:'Voice + chat CDP', badge:'cbadge-v', badgeText:'Voice + chat',
+  newLabel:'New customer', retLabel:'Returning customer',
+  hasNewRet: false,
+  industries:{
+    banking:{
+      name:'Banking & financial services',
+      tagline:'Build profiles from every service call and WhatsApp thread — turn call centre cost into revenue and retention.',
+      touchpoints:['Dormant account outbound call','Loan drop-off follow-up','Churned credit card call','WhatsApp re-engagement','FD renewal alert call','Cross-sell follow-up'],
+      steps:[
+        {t:'First inbound service call',s:'Balance, statement, or product query',tag:'tk',tl:'Core wedge',prob:'Call handled, case closed. No profile built from the conversation.',does:'Intent, product interest, and complaint signal extracted. Every call becomes a data point — not a ticket.',ex:'Customer calls about a statement error, mentions "I\'ve been thinking about a home loan." Tagged: home loan interest, trusted relationship. Banker flagged to follow up.',sell:'"Your customer mentioned a home loan need on a service call. Your CRM logged a statement dispute."'},
+        {t:'Loan enquiry drop-off',s:'Enquiry started, not completed',tag:'tk',tl:'Core wedge',prob:'Drop-off treated as a cold lead. Generic outreach follows.',does:'Call transcript identifies the exact drop-off reason — rate objection, document concern, or competitor comparison. Follow-up is targeted.',ex:'Customer said "I\'ll compare with HDFC" before ending call. ConvoBrains schedules a comparison callback in 48 hours with a rate-match brief.',sell:'"Your loan drop-off called you. You have the reason they stopped. Your follow-up ignored it."'},
+        {t:'Credit card inactivity',s:'Card not used in 60 days',tag:'tw',tl:'We differentiate',prob:'Generic activation call or SMS. No context on why card is dormant.',does:'Last usage category + complaint history shape the activation approach. Fee objection profile gets a waiver offer call. Competitor-switch signal gets a rewards comparison.',ex:'Customer stopped using card after annual fee was charged. Activation call leads with: "We\'d like to waive this year\'s fee for you."',sell:'"Your inactive card holder stopped using it for a reason. Your activation call doesn\'t know what it is."'},
+        {t:'Product cross-sell signal',s:'Service call reveals adjacent need',tag:'tw',tl:'We differentiate',prob:'Cross-sell is calendar-driven or random. Not triggered by conversation.',does:'Real-time extraction of life event signals — home purchase intent, salary credit increase, new EMI — triggers the right product conversation.',ex:'Customer calls to update address to a new city. Tagged: relocation + home loan intent. Relationship manager briefed before next call.',sell:'"A change of address to a new city is a home loan signal. You filed it as an address update."'},
+        {t:'Churn or closure risk',s:'Account closure query or angry call',tag:'tk',tl:'Core wedge',prob:'Retention attempt is a generic discount or waiver offer.',does:'Churn signal type — fee, service failure, competitor offer — shapes the retention call script. Different response per reason.',ex:'Customer called to close account citing "too many charges." Retention call leads with fee structure review, not an FD offer.',sell:'"An angry customer who\'s about to leave told you exactly why. Your retention script didn\'t listen."'},
+        {t:'Renewal or lapse',s:'FD maturity, policy renewal, or SIP lapse',tag:'tk',tl:'Core wedge',prob:'Auto-renewal reminder is generic. No conversation context used.',does:'Past call context — investment goal, risk appetite, future plans — shapes the renewal conversation.',ex:'Customer mentioned "saving for daughter\'s education" on a call 2 years ago. FD matures. Renewal call: "Your education fund FD is due — ready to renew toward the same goal?"',sell:'"Your customer told you what they were saving for. Your renewal call forgot."'},
+      ]
+    },
+    healthcare:{
+      name:'Healthcare & clinics',
+      tagline:'Turn every patient call and chat into a care profile that drives preventive outreach and reduces no-shows.',
+      touchpoints:['Missed appointment call','Preventive care reminder call','Lapsed patient SMS + chat','Annual checkup outbound','Prescription refill reminder','Specialist follow-up call'],
+      steps:[
+        {t:'Appointment booking call',s:'Patient books over phone',tag:'tk',tl:'Core wedge',prob:'Call handled, appointment logged. No clinical context captured from the conversation.',does:'Symptom mention, anxiety signals, and past visit context extracted. Doctor briefed before the appointment. Care coordinator alerted if urgency detected.',ex:'Patient calls to book, mentions "it\'s been hurting for 3 weeks but I kept putting it off." Tagged: delayed care + pain duration. Appointment prioritised.',sell:'"Your patient told the front desk why they waited 3 weeks. The doctor never heard it."'},
+        {t:'No-show / missed appointment',s:'Appointment not attended',tag:'tk',tl:'Core wedge',prob:'Generic "you missed your appointment" SMS. No understanding of why.',does:'Conversation history provides no-show context. Transport issue, cost concern, or anxiety — each gets a different re-booking call approach.',ex:'Patient mentioned "getting there is a problem" during booking call. No-show follow-up: "We have a telemedicine slot — no travel needed."',sell:'"Your patient told you why they might not come. Your no-show SMS didn\'t read the notes."'},
+        {t:'Preventive care gap',s:'Due for checkup, screening, or vaccine',tag:'tw',tl:'We differentiate',prob:'Preventive care reminders sent on a fixed schedule to all eligible patients.',does:'Past call context — health anxiety, family history mentioned, last appointment concern — personalises the preventive care outreach.',ex:'Patient mentioned "my father had diabetes" during a past call. Annual checkup outreach: "Given your family history, here\'s a diabetes screening package."',sell:'"Your patient mentioned their family history. Your annual reminder didn\'t connect those dots."'},
+        {t:'Post-visit follow-up',s:'After consultation or procedure',tag:'tw',tl:'We differentiate',prob:'Same post-visit call for minor consultation and major procedure.',does:'Procedure type and doctor\'s notes shape the follow-up call content and urgency.',ex:'Patient had a cardiac consultation. Follow-up call at day 3: "How are you feeling since the ECG? Any symptoms to flag before your report comes in?"',sell:'"A cardiac patient and a cold patient both got a call asking how they\'re feeling. Same call, different stakes."'},
+        {t:'Lapsed patient',s:'No visit in 12 months',tag:'tk',tl:'Core wedge',prob:'Re-engagement call is generic. No clinical context from previous visits.',does:'Last visit reason + chronic condition tags shape the re-engagement call.',ex:'Patient has hypertension on record. Last visit 14 months ago. Outbound: "Your last BP check was over a year ago — a 15-minute check-in with Dr Mehta?"',sell:'"Your lapsed patient with hypertension got the same re-engagement call as someone who came in for a cold."'},
+      ]
+    },
+    auto:{
+      name:'Automotive',
+      tagline:'Turn every service visit call and showroom follow-up into a persistent ownership profile that drives retention and upsell.',
+      touchpoints:['Service overdue outbound call','Lease-end proactive call','Showroom no-show follow-up','Chat re-engagement','Insurance renewal call','Accessory upsell follow-up'],
+      steps:[
+        {t:'Showroom enquiry call',s:'Prospect calls or is called post-visit',tag:'tk',tl:'Core wedge',prob:'Enquiry logged, follow-up is generic. No objection or preference captured.',does:'Model preference, budget signal, trade-in mention, and competitor comparison extracted in real-time.',ex:'Prospect says "we\'re also looking at Nexon." ConvoBrains tags competitor, triggers a comparison follow-up with a comparison sheet within 2 hours.',sell:'"A prospect mentioned a competitor on the call. Your follow-up email talked about your boot space."'},
+        {t:'Test drive no-show',s:'Booked but didn\'t show',tag:'tw',tl:'We differentiate',prob:'Generic re-booking SMS.',does:'Call transcript reason for no-show shapes the follow-up. Family pushback gets a couple\'s test drive invite. Work conflict gets an evening slot.',ex:'Customer mentioned "wife needs to be there too." No-show follow-up: "How about a Saturday morning drive — bring the family?"',sell:'"They told you why they couldn\'t come. Your re-booking SMS didn\'t use that information."'},
+        {t:'Service call',s:'Vehicle brought in for service',tag:'tk',tl:'Core wedge',prob:'Service reminders are calendar-based. No context from previous service calls.',does:'Past service complaint, upcoming trip mention, or extended warranty interest — all extracted and used for the next service touchpoint.',ex:'Customer mentioned "long drive to Coorg next month" during service call. Follow-up: "Your trip is next month — tyre check and a full service before you go?"',sell:'"Your customer told the service advisor about their Coorg trip. Nobody followed up on that."'},
+        {t:'Lease-end or upgrade window',s:'Lease nearing end or 3yr mark',tag:'tk',tl:'Core wedge',prob:'Lease-end call is a generic "your lease ends soon" reminder.',does:'Ownership call history reveals upgrade preferences, pain points, and feature wishlist. Upgrade conversation is pre-informed.',ex:'Customer complained about rear legroom twice in service calls. Upgrade outreach: "The new variant has 4 inches more legroom than your current model."',sell:'"Your customer complained about legroom twice. Your upgrade call led with engine specs."'},
+        {t:'Insurance / AMC renewal',s:'Annual policy or contract due',tag:'tw',tl:'We differentiate',prob:'Renewal reminder is transactional. No context on usage or past claims.',does:'Driving pattern, past claims, and service frequency shape the renewal conversation and upsell.',ex:'High-mileage customer with 2 service visits. Renewal: "Given how much you drive, comprehensive cover with zero dep makes sense — here\'s the breakdown."',sell:'"You know how much this customer drives. Your insurance renewal call doesn\'t mention it."'},
+      ]
+    },
+    realestate:{
+      name:'Real estate',
+      tagline:'Build persistent buyer profiles from every call and site visit — and let ConvoBrains decide what happens next.',
+      touchpoints:['Inquiry drop-off call','Price-change alert + call','Lead re-nurture WhatsApp','Post-visit follow-up','Budget re-qualification call','Referral follow-up'],
+      steps:[
+        {t:'Inquiry call',s:'Prospect calls from ad or listing',tag:'tk',tl:'Core wedge',prob:'Call handled, basic info taken. No deeper intent or constraint profile built.',does:'Budget range, location preference, family size hints, and urgency signal extracted. Profile built from first call.',ex:'Prospect says "we need 3BHK, my parents will stay with us." Tagged: extended family configuration, ground-floor preference likely. Agent briefed for site visit.',sell:'"Your buyer told the front desk about their parents. The site visit agent showed them a 10th-floor unit."'},
+        {t:'Site visit, no decision',s:'Visited but didn\'t book',tag:'tk',tl:'Core wedge',prob:'Post-visit follow-up is generic. No objection mining from the visit conversation.',does:'Post-visit call extracts exact objection — price, vastu, floor, view. Next follow-up targets that specific concern.',ex:'Buyer said "east-facing is important for us." Tagged: vastu preference. Next follow-up highlights the east-facing units available.',sell:'"Your buyer told you on the site visit what mattered most. Your follow-up email showed them all units."'},
+        {t:'Competitor mention',s:'Prospect comparing with another project',tag:'tw',tl:'We differentiate',prob:'No action triggered when a competitor is mentioned.',does:'Competitor mention detected in real-time. Comparison sheet and specific differentiator sent within 2 hours.',ex:'"We\'re also seeing Lodha Palava." ConvoBrains triggers: possession timeline comparison + amenity breakdown vs Lodha, in buyer\'s WhatsApp.',sell:'"A buyer who mentioned a competitor has 24 hours before they decide. You called back in 3 days."'},
+        {t:'Price sensitivity signal',s:'Budget constraint raised on call',tag:'tw',tl:'We differentiate',prob:'Price objection gets a discount offer. No alternative path shown.',does:'Budget constraint profiled. Smaller unit in the same project, flexible payment plan, or a nearby project in budget — presented as options.',ex:'"₹85L is our max." ConvoBrains: no discount. Instead routes to the 2BHK premium in the same complex at ₹82L.',sell:'"A buyer who said ₹85L max doesn\'t want a discount. They want a unit that fits."'},
+        {t:'Long-term nurture',s:'Lead goes quiet for 3+ months',tag:'tk',tl:'Core wedge',prob:'Lapsed lead gets a generic re-engagement call.',does:'Call history profile — project preference, life stage hint, budget — shapes re-engagement timing and angle.',ex:'Buyer mentioned "we\'re targeting possession after my son\'s school year ends." ConvoBrains waits until April, then re-engages with possession timeline aligned to June.',sell:'"Your buyer told you when they wanted to move. Your re-engagement call went out in January."'},
+      ]
+    },
+    telecom:{
+      name:'Telecom',
+      tagline:'Use every IVR and call centre interaction to build a churn-risk profile and drive pre-emptive retention.',
+      touchpoints:['Pre-churn retention call','Plan upgrade outbound','Reactivate prepaid via call','IVR-triggered win-back','Data pack upsell call','Complaint follow-up call'],
+      steps:[
+        {t:'Service complaint call',s:'Network, billing, or plan issue',tag:'tk',tl:'Core wedge',prob:'Complaint resolved, ticket closed. No churn risk flag raised.',does:'Complaint type and sentiment score a churn probability. High-risk customers flagged for a proactive retention call within 48 hours.',ex:'Customer called twice about network in same area. Third call imminent. ConvoBrains triggers a proactive retention call with a network improvement update and a plan discount offer.',sell:'"Two complaints in 30 days is a churn alert. You\'re waiting for them to call to cancel."'},
+        {t:'Plan inquiry without upgrade',s:'Asked about better plan, didn\'t switch',tag:'tw',tl:'We differentiate',prob:'Inquiry noted. No proactive follow-up. Plan inquiry treated as browsing.',does:'Plan inquiry plus usage pattern computes the upgrade value. Follow-up call presents the specific benefit — not a generic plan menu.',ex:'Customer asked about 5G plans but didn\'t switch. Usage shows they\'re near their data limit monthly. Follow-up: "You\'re hitting your limit every month — 5G plan adds 20GB for ₹50 more."',sell:'"Your customer asked about an upgrade and didn\'t convert. Your system filed it and moved on."'},
+        {t:'Prepaid lapse',s:'Recharge not done in 7 days',tag:'tk',tl:'Core wedge',prob:'Generic recharge reminder IVR or SMS.',does:'Last recharge value and complaint history shape the reactivation approach.',ex:'Customer always recharges ₹299 plan. Lapse at day 7. IVR call: "Your favourite plan is waiting — recharge in 10 seconds." Not a generic "your account is inactive."',sell:'"A prepaid customer who lapses after 2 years of ₹299 recharges needs a personalised recall, not a generic IVR."'},
+        {t:'Pre-churn signal',s:'Usage drop + complaint + plan inquiry',tag:'tk',tl:'Core wedge',prob:'Churn detected only when port request comes in. Too late.',does:'Multi-signal churn score combines usage drop, complaint frequency, and plan browse. Proactive outreach fires before intent becomes action.',ex:'Customer\'s data usage dropped 60%, raised a billing complaint, and browsed competitor plans on the portal. ConvoBrains triggers a retention call — before the port request.',sell:'"You know 3 signals that predict churn. You\'re waiting for a 4th — the port request."'},
+        {t:'Win-back after porting',s:'Customer has switched provider',tag:'tw',tl:'We differentiate',prob:'Win-back offer is generic. No understanding of why they left.',does:'Exit profile built from last interaction — network quality, price, or competitor offer — shapes the win-back timing and pitch.',ex:'Customer cited network quality as exit reason. Win-back triggered when new tower is installed in their pin code: "Your area\'s network just got an upgrade."',sell:'"Your win-back offer is a discount. They left because of network. They\'ll come back for network."'},
+      ]
+    },
+    insurance:{
+      name:'Insurance',
+      tagline:'Mine every policy call for cross-sell signals and renewal risk — and act before the customer decides to lapse.',
+      touchpoints:['Renewal lapse call','Policy dormancy outbound','Cross-sell follow-up call','Chatbot re-engagement','Claims follow-up call','Life event trigger call'],
+      steps:[
+        {t:'Policy enquiry call',s:'Prospect enquires about a product',tag:'tk',tl:'Core wedge',prob:'Enquiry call taken, quote given. No life event or underlying need profiled.',does:'Life event signal — marriage, child, new job, home purchase — extracted from context. The right product is matched to the actual trigger.',ex:'Customer enquires about health insurance, mentions "they are expecting a baby." ConvoBrains profiles: maternity cover priority, life insurance next-step likely. Both flagged.',sell:'"Your customer told you they\'re expecting. Your health insurance quote didn\'t mention maternity cover."'},
+        {t:'Claims call',s:'Customer files or asks about a claim',tag:'tk',tl:'Core wedge',prob:'Claims call handled as operations. No relationship or cross-sell intelligence extracted.',does:'Claim type and customer sentiment create a post-claim profile. Satisfied claimants are prime cross-sell moments. Frustrated claimants need retention focus.',ex:'Customer had a smooth car claim. ConvoBrains flags: high trust moment. Follow-up call: "Glad it worked out — have you thought about covering your home too?"',sell:'"A smooth claim is the best time to cross-sell. Your claims team is focused on closing the file."'},
+        {t:'Renewal risk signal',s:'No renewal response before deadline',tag:'tk',tl:'Core wedge',prob:'Reminder escalation is time-based, not signal-based.',does:'Non-response plus past complaint or cost-sensitivity profile triggers an agent call with a pre-built retention brief.',ex:'Customer raised a premium objection last year. Silent this renewal. Retention call: "Your premium went up 12% — here\'s why, and here\'s what we can adjust."',sell:'"Your customer raised a premium objection last year. Your renewal call didn\'t acknowledge that."'},
+        {t:'Policy dormancy',s:'Policy active but no engagement',tag:'tw',tl:'We differentiate',prob:'Dormant policyholders are invisible. No outreach until renewal.',does:'Dormancy plus life event hints from past calls trigger a check-in call — which becomes a cross-sell opportunity.',ex:'Customer bought health policy 3 years ago. Last call mentioned kids starting school. Outbound: "Health cover for the kids — they\'re probably school-age now?"',sell:'"Your policy has been active for 3 years. You haven\'t spoken to the customer once."'},
+        {t:'Lapse and win-back',s:'Policy lapsed or cancelled',tag:'tk',tl:'Core wedge',prob:'Win-back is a discount or generic call.',does:'Lapse reason — price, claim dissatisfaction, or life change — built from last call. Win-back approach matches the exit reason.',ex:'Customer lapsed after a disputed claim. Win-back not a discount — it\'s a "your dispute has been reviewed" call with a revised settlement.',sell:'"They lapsed because of a claims dispute. You called them back with a renewal discount."'},
+      ]
+    },
+  }
+},
+
+/* ============================  BOTH  ============================ */
+both: {
+  label:'Both channels', badge:'cbadge-b', badgeText:'Both channels',
+  newLabel:'New customer', retLabel:'Returning customer',
+  hasNewRet: false,
+  industries:{
+    omnichannel:{
+      name:'Omnichannel / brick-and-mortar retail',
+      tagline:'Unify in-store associate calls, loyalty app signals, and digital behaviour into one persistent shopper profile.',
+      touchpoints:['In-store geofence + push','Lapsed loyalty call','Win-back email series','Store associate chat','Replenishment push','Post-visit cross-sell'],
+      steps:[
+        {t:'Store visit',s:'Walk-in, no purchase or partial purchase',tag:'tk',tl:'Core wedge',prob:'Visit happened. Nothing is captured. No follow-up possible without identity.',does:'Loyalty check-in or associate chat captures visit context. Category browsed, item tried, and reason-not-bought tagged.',ex:'Customer tried 3 suits, none fit well. Associate logs fit concern. Next visit: the made-to-measure service is surfaced on the loyalty app.',sell:'"Your customer spent 40 minutes in your store and left without buying. Nobody logged why."'},
+        {t:'Loyalty app signal',s:'Points check, wishlist, or app browse',tag:'tw',tl:'We differentiate',prob:'App behaviour treated separately from in-store and call behaviour.',does:'Cross-channel profile merges app browse, store visit, and any CS call into one view. Wishlist item approaching restock triggers a personal push.',ex:'Customer wishlisted a jacket in the app, visited the store but it wasn\'t in their size. Restock push: "Your size just came in — reserved for 24 hours."',sell:'"Your customer tried to buy something twice. You never connected those two signals."'},
+        {t:'Lapsed loyalty member',s:'No purchase in 90 days',tag:'tk',tl:'Core wedge',prob:'Mass win-back email with a discount.',does:'Last purchase category, visit frequency, and any CS call context shape the win-back channel and content.',ex:'High-frequency buyer who bought fortnightly, now silent for 90 days. Outbound call from the store manager — not an email.',sell:'"A buyer who came every two weeks deserves a phone call, not a mass email."'},
+        {t:'Post-purchase cross-sell',s:'Recent purchase in a category',tag:'tw',tl:'We differentiate',prob:'Cross-sell email shows generic bestsellers.',does:'In-store associate notes and purchase profile compute the most relevant adjacent product.',ex:'Customer bought a formal blazer. Associate noted they were shopping for a new job. Email: "Complete the look — trousers, belt, and shoes that match your blazer."',sell:'"Your associate knows what the customer is dressing for. Your cross-sell email doesn\'t."'},
+        {t:'Win-back after long lapse',s:'No purchase in 6+ months',tag:'tk',tl:'Core wedge',prob:'Generic 20% off email. No understanding of why they stopped.',does:'Store visit log + purchase history + any CS call determine the exit reason. In-store invitation or personalised offer matches the profile.',ex:'Customer bought exclusively in season sales. Lapse is off-season. Win-back waits for the season sale, then leads with: "Your sale wishlist — it starts this Friday."',sell:'"Some customers only buy on sale. Your year-round win-back campaigns are wasted on them."'},
+      ]
+    },
+    travel:{
+      name:'Travel & hospitality',
+      tagline:'Build trip-context profiles from booking calls and app signals — and use them to drive loyalty and re-booking.',
+      touchpoints:['Lapsed booker email','Status reinstatement call','Abandoned booking push','Concierge WhatsApp','Upgrade offer call','Post-stay win-back'],
+      steps:[
+        {t:'Booking enquiry',s:'Call or web inquiry, no completion',tag:'tk',tl:'Core wedge',prob:'Drop-off treated as a cold lead.',does:'Call transcript extracts trip purpose, travel party, and price objection. Follow-up is targeted to the exact barrier.',ex:'"We\'re travelling for our anniversary" mentioned. Drop-off on price. Follow-up: "Anniversary package with breakfast included — same price as the standard room."',sell:'"They told you it\'s their anniversary. Your drop-off email showed them a room with a bed."'},
+        {t:'Post-booking pre-travel',s:'Booking confirmed, travel upcoming',tag:'tw',tl:'We differentiate',prob:'Pre-travel communication is generic information emails.',does:'Trip purpose and travel party profile personalises pre-travel touchpoints — upsells, activity suggestions, and concierge offers match the occasion.',ex:'Family with two kids travelling. Pre-travel push: "Kids\' activity schedule at the resort — book ahead to avoid queues."',sell:'"A family traveller and a business traveller booked the same hotel. You sent them both a weather update."'},
+        {t:'In-stay experience call',s:'Guest contacts concierge or CS',tag:'tk',tl:'Core wedge',prob:'In-stay complaint or request handled as a service ticket. No loyalty opportunity.',does:'In-stay call sentiment and request type shape the post-stay follow-up and loyalty offer.',ex:'Guest called about a noisy room, was moved and upgraded. Post-stay: "We know the move was disruptive — your next stay starts with a complimentary upgrade."',sell:'"A guest who was moved rooms during their stay needs a recovery offer, not a standard feedback survey."'},
+        {t:'Post-stay win-back',s:'No re-booking in 90 days',tag:'tk',tl:'Core wedge',prob:'Post-stay re-engagement is a generic "book again" discount.',does:'Stay purpose, in-stay sentiment, and last booking destination profile the win-back angle.',ex:'Guest stayed for a wedding anniversary. 11-month anniversary approaching. Email: "Your anniversary is coming up — same suite, same view, early bird rate."',sell:'"Your guest told you they were celebrating an anniversary. You\'re waiting for them to remember to book."'},
+        {t:'Loyalty status risk',s:'Points or tier about to lapse',tag:'tw',tl:'We differentiate',prob:'Generic tier expiry warning.',does:'Travel history and call context compute the easiest qualifying path. Personalised suggestion to retain status.',ex:'Frequent flyer 1 flight short of silver. Outbound: "One short hop to Bangalore keeps your Silver — here are the next 3 options."',sell:'"Your loyalty member is one flight from keeping their status. You sent a generic points statement."'},
+      ]
+    },
+    fitness:{
+      name:'Fitness & wellness',
+      tagline:'Combine app inactivity signals with trainer check-in calls to build a retention engine that feels personal.',
+      touchpoints:['Lapsed member push','Trainer check-in call','App inactivity SMS','Free class win-back','Goal milestone nudge','Membership renewal call'],
+      steps:[
+        {t:'Onboarding call / orientation',s:'New member joins and is briefed',tag:'tk',tl:'Core wedge',prob:'Onboarding is generic. Goal, injury history, and schedule preference captured on paper and forgotten.',does:'Onboarding call transcribed. Goal, availability, and any constraint tagged. First 4 weeks programme is personalised.',ex:'Member mentioned "I can only come mornings and I have a bad knee." ConvoBrains builds a profile: morning slots, low-impact classes only. App push avoids evening HIIT classes.',sell:'"Your new member told the trainer about their knee on day 1. Your app pushed HIIT classes all week."'},
+        {t:'App inactivity signal',s:'No check-in or class booking in 10 days',tag:'tw',tl:'We differentiate',prob:'Generic "we miss you" push to all inactive members.',does:'Last class type + goal profile + day-of-week pattern shape the re-engagement.',ex:'Member always did yoga on Tuesday. Missed 2 Tuesdays. Push: "Your Tuesday yoga spot is still open — book before it fills."',sell:'"A member who does yoga every Tuesday needs a Tuesday yoga nudge, not a generic \'we miss you\'."'},
+        {t:'Trainer check-in call',s:'Proactive outreach from trainer',tag:'tk',tl:'Core wedge',prob:'Trainer check-in call is random, not triggered by behaviour data.',does:'Inactivity + goal proximity triggers a trainer call brief. Trainer knows what to say before calling.',ex:'Member set a weight goal, has been inactive 12 days, is 80% toward goal. Trainer called with: "You\'re so close — what\'s been getting in the way?"',sell:'"Your trainer called to check in. They had no idea the member was 80% toward their goal."'},
+        {t:'Membership renewal',s:'Annual or monthly membership nearing end',tag:'tk',tl:'Core wedge',prob:'Renewal reminder is a transaction — price and date.',does:'Attendance frequency, goal progress, and any complaint or trainer note shape the renewal conversation.',ex:'Member attended 3x per week for 10 months. Renewal call: "You\'ve come 3 times a week for almost a year — that\'s a real habit. Ready to lock in another year?"',sell:'"Your most consistent member deserves a renewal conversation that acknowledges their commitment."'},
+        {t:'Lapsed member win-back',s:'Membership lapsed or cancelled',tag:'tk',tl:'Core wedge',prob:'Free class or discount offer to all lapsed members.',does:'Exit reason — schedule conflict, injury, relocation, or price — from last call or app behaviour shapes the win-back.',ex:'Member stopped after mentioning a work travel period. Win-back: "Back in town? Your spot is here — here\'s a free week to get back in the groove."',sell:'"A member who paused because of work travel isn\'t lapsed — they\'re returning. You treated them like a lost cause."'},
+      ]
+    },
+    saas:{
+      name:'SaaS / B2B software',
+      tagline:'Turn every CSM call, onboarding chat, and trial interaction into a product fit and churn-risk profile.',
+      touchpoints:['Feature-abandonment email','CSM re-engagement call','Trial expiry push','Downgrade intervention chat','Expansion signal call','QBR scheduling nudge'],
+      steps:[
+        {t:'Trial sign-up',s:'User activates a free trial',tag:'tw',tl:'We differentiate',prob:'Trial onboarding sequence is the same for all users. No role or use-case personalisation.',does:'Onboarding call or chat extract the key use case, team size, and success metric. Trial sequence is re-ordered to surface the most relevant features first.',ex:'Prospect mentions "we need this for our support team of 12." ConvoBrains surfaces team inbox and SLA features in trial — not the solo user flow.',sell:'"Your trial onboarding showed a 12-person support team the same 5-step solo setup flow."'},
+        {t:'Feature abandonment',s:'Key feature tried once, not returned to',tag:'tk',tl:'Core wedge',prob:'Feature adoption data is tracked but no action fires per-user.',does:'Feature abandonment cross-referenced with stated use case. If the abandoned feature is critical to their job-to-be-done, a targeted re-engagement fires.',ex:'Prospect set up automation but never activated it. Automation was their stated reason for the trial. Email: "Your automation is set up — one click to turn it on."',sell:'"The feature they came for is sitting dormant. You sent a generic check-in email."'},
+        {t:'Trial expiry',s:'Trial ending, no conversion',tag:'tk',tl:'Core wedge',prob:'Same discount offer to all expiring trials.',does:'Trial depth score — logins, features used, team invited — segments expiring trials. High-engagement non-converter gets a CSM call. Low-engagement gets an ROI case study.',ex:'Trial has 8 logins, 3 team members invited, but no payment. CSM call brief: "They\'re engaged — probably internal approval needed. Focus on the procurement conversation."',sell:'"An 8-login trial with 3 team members invited is not a disengaged trial. It needs a procurement conversation, not a discount email."'},
+        {t:'Churn or downgrade signal',s:'Usage drop or downgrade initiated',tag:'tk',tl:'Core wedge',prob:'CSM calls when churn is already in motion. Retention is reactive.',does:'Usage drop + complaint call log + feature abandonment compute churn score. CSM briefed with full conversation history for a proactive call.',ex:'Account usage dropped 40%, one complaint call logged about a missing integration. CSM call: "We saw your usage change — the integration you mentioned is on the Q3 roadmap."',sell:'"Your CSM found out about the churn risk when they saw the Slack message about cancelling."'},
+        {t:'Expansion signal',s:'Power user activity or seat growth',tag:'tw',tl:'We differentiate',prob:'Expansion opportunity identified by chance or during QBR.',does:'Power user signals — max seat usage, feature boundary hits — trigger a proactive expansion call with a tailored upgrade brief.',ex:'Team hits seat limit 3 months in a row. CSM briefed: "They\'ve maxed out seats for 90 days — they\'re ready for the next tier."',sell:'"Your customer has been at seat capacity for 3 months. You found out at the QBR."'},
+      ]
+    },
+    highered:{
+      name:'Higher education & test prep',
+      tagline:'Turn every counsellor call, form submission, and campus visit into a persistent applicant profile that closes enrolment gaps.',
+      touchpoints:['Application drop-off email','Counsellor follow-up call','Re-enrolment push','WhatsApp lead nurture','Scholarship alert','Deferral follow-up call'],
+      steps:[
+        {t:'Enquiry or form fill',s:'Prospective student contacts admissions',tag:'tk',tl:'Core wedge',prob:'Enquiry received, generic brochure sent. No intent or concern profiling.',does:'Form language and first call extract goal, concern, financial signal, and decision-maker (parent vs student). Counsellor briefed.',ex:'Student mentions "my parents are unsure about the ROI." ConvoBrains tags: parent objection, ROI concern. Counsellor\'s next call opens with placement data, not course highlights.',sell:'"Your student told you it\'s the parents who have doubts. You sent a course brochure to the student."'},
+        {t:'Application drop-off',s:'Application started, not submitted',tag:'tw',tl:'We differentiate',prob:'Generic "complete your application" email.',does:'Drop-off stage in the form identifies the specific friction. Documents, essay, or fee payment — each gets a different nudge.',ex:'Applicant dropped off at the essay section. Email: "The essay question is open-ended — here\'s what strong answers look like."',sell:'"Your applicant dropped off at the essay. You told them to complete their application."'},
+        {t:'Counsellor call',s:'One-on-one with admissions counsellor',tag:'tk',tl:'Core wedge',prob:'Call happens, insights die with the recording. No action fires automatically.',does:'Every call transcribed. Objections, career goal, budget, and parent concern extracted. Next best action triggered immediately.',ex:'"I want to be a product manager" mentioned three times. Onboarding step 1 becomes a PM alumni call — not a generic orientation.',sell:'"Your counsellors uncover gold on every call. That gold disappears when the call ends."'},
+        {t:'Campus visit or open day',s:'Prospect attends physical event',tag:'tw',tl:'We differentiate',prob:'Post-visit follow-up is a thank-you email and brochure.',does:'Post-visit call extracts specific interest from conversations at the event. Follow-up matches what was discussed.',ex:'Prospect spent 30 min at the fintech lab. Post-visit email: "You seemed interested in the fintech programme — here\'s a chat with a current student."',sell:'"Your prospect told your faculty member what they care about. Your follow-up email didn\'t know that."'},
+        {t:'Accepted, not enrolled',s:'Offer made, no fee payment',tag:'tk',tl:'Core wedge',prob:'Generic fee payment reminder.',does:'Acceptance drop-off profile — financial concern, competing offer, or parent hesitation — shapes the follow-up call.',ex:'"Comparing with IIM Indore" was logged on a call. Accepted but silent. Counsellor call: "Here\'s how our programme compares directly — placement, cost, and alumni."',sell:'"Your accepted candidate is comparing you with a competitor. Your follow-up is a fee payment reminder."'},
+      ]
+    },
+  }
+}
+
+}; // end DATA
+
+
+/* ============================================================
+   INDUSTRY META — problem statement + so-what revenue stats
+============================================================ */
+const INDUSTRY_META = {
+  /* NON-VOICE */
+  ecommerce:{
+    problem:'D2C brands lose 70–80% of first-time visitors without a purchase. Of those who do buy, 60% never return. The difference between a 1x buyer and a 3x buyer is almost always what happened in the 48 hours after the first order.',
+    problemSub:'The revenue gap is not in acquisition — it is in what you do (or do not do) the moment after someone engages.',
+    stats:[
+      {num:'68%',desc:'of cart abandonments receive a generic "you left something behind" email — same message regardless of intent'},
+      {num:'3x',desc:'higher LTV from buyers who receive a personalised post-purchase sequence vs a standard thank-you email'},
+      {num:'₹0',desc:'incremental revenue from win-back campaigns sent to lapsed buyers who were waiting for a sale anyway'},
+    ]
+  },
+  subbox:{
+    problem:'Subscription box brands lose 20–30% of subscribers every month. Most of them skipped once or twice before cancelling — and nobody acted on those skips.',
+    problemSub:'The churn signal existed weeks before the cancel. The system was not listening.',
+    stats:[
+      {num:'2 skips',desc:'is the average warning before a subscriber cancels — almost no brand has an automatic response to the second skip'},
+      {num:'40%',desc:'of pause requests convert to cancellations because brands treat pause and cancel the same way'},
+      {num:'80%',desc:'of win-back campaigns lead with a discount — even when the subscriber left due to poor curation fit, not price'},
+    ]
+  },
+  beauty:{
+    problem:'Beauty brands have one of the highest replenishment rates of any category — and one of the worst replenishment capture rates. Most customers run out and reorder from wherever is fastest.',
+    problemSub:'You are losing repeat purchases you already earned because your reminders fire on a calendar, not on the product lifecycle.',
+    stats:[
+      {num:'Day 30',desc:'is when most beauty brands send a replenishment reminder — even for a 50ml serum that lasts 45 days'},
+      {num:'1 step',desc:'is typically missing from a loyal skincare buyer routine — and brands almost never identify and fill it'},
+      {num:'3x',desc:'higher retention among loyalty members who are told exactly what they can redeem — vs those who just see a points balance'},
+    ]
+  },
+  food:{
+    problem:'Food delivery apps have some of the highest churn in any consumer category. A user who ordered twice a week and goes quiet for 10 days is almost always gone permanently — and the re-engagement push looks exactly the same as the one sent to someone who just got busy.',
+    problemSub:'The difference between a lapsed user and a churned user is one personalised push sent on the right day.',
+    stats:[
+      {num:'10 days',desc:'of silence is the average point-of-no-return for a food delivery user — most brands wait 30 days to act'},
+      {num:'Friday 7pm',desc:'example: a user who always orders biryani on Friday evenings needs a Thursday nudge — not a generic Tuesday promo'},
+      {num:'2-star',desc:'is the most common last rating before a user churns — and the win-back email rarely acknowledges it'},
+    ]
+  },
+  edtech:{
+    problem:'Online course completion rates sit at 5–15% globally. The students who drop out are not disinterested — they are stuck, usually at the same hard module that trips everyone up. A timely, relevant nudge at that exact point converts more than any discount.',
+    problemSub:'You are spending on acquisition and losing at the exact moment the student needs help most.',
+    stats:[
+      {num:'85%',desc:'of course drop-offs happen at predictable friction points — the same 2–3 modules in every course'},
+      {num:'67 days',desc:'example: breaking a 67-day streak is devastating — the re-engagement message needs to match the emotional weight of the loss'},
+      {num:'28%',desc:'example: UX job postings rose 28% in one month — a learner studying UX needs that signal, not a generic motivational email'},
+    ]
+  },
+  /* VOICE */
+  banking:{
+    problem:'Bank customers call about a statement error and mention a home loan need in the same sentence. The loan need goes unlogged. The error gets resolved. Months later, the customer takes the loan from a competitor.',
+    problemSub:'The cross-sell opportunity is buried inside the service call. Your CRM only captures the service request.',
+    stats:[
+      {num:'1 in 3',desc:'service calls contains a cross-sell signal — product interest, life event, or competitor mention — that the agent does not log'},
+      {num:'2 complaints',desc:'in 30 days is a churn indicator in banking — most retention teams act only after the account closure request'},
+      {num:'0',desc:'times the renewal call mentioned what the customer said they were saving for — even when it was on file from 2 years ago'},
+    ]
+  },
+  healthcare:{
+    problem:'A patient calls to book an appointment and mentions they have been putting it off for 3 weeks because getting there is a problem. They no-show. The follow-up SMS says you missed your appointment. Nobody remembered what they said on the call.',
+    problemSub:'Care continuity breaks the moment the call ends and the notes are not structured.',
+    stats:[
+      {num:'30%',desc:'of no-shows could be recovered with a transport-specific alternative — telemedicine, home visit, or nearby clinic'},
+      {num:'12 months',desc:'is how long a patient with hypertension can go without a check-in from a clinic that has their record on file'},
+      {num:'3 weeks',desc:'example: patient delayed care for 3 weeks — doctor never heard this before the appointment began'},
+    ]
+  },
+  auto:{
+    problem:'A car buyer visits the showroom, mentions their wife needs to be there for the decision, and no-shows the test drive. The re-booking SMS says "reschedule your test drive." Nobody used the information the buyer volunteered.',
+    problemSub:'Every conversation with a prospect or owner contains a signal. Almost none of them are captured and acted on.',
+    stats:[
+      {num:'Nexon',desc:'example: prospect mentioned the competitor on the call — follow-up email talked about boot space'},
+      {num:'2x',desc:'complaints about rear legroom in service calls — upgrade pitch led with engine specs anyway'},
+      {num:'Coorg',desc:'example: customer mentioned a long drive next month on a service call — nobody followed up with a pre-trip service offer'},
+    ]
+  },
+  realestate:{
+    problem:'A real estate buyer visits a site, spends 40 minutes there, tells the agent that east-facing is important for vastu, and leaves without booking. The follow-up shows them all available units. The east-facing ones are buried on page 3.',
+    problemSub:'Buyers tell you exactly what they want on the site visit. That information rarely survives the handover to the follow-up team.',
+    stats:[
+      {num:'60–70%',desc:'of site visit inquiries go cold — most follow-up calls happen 3 days late with no memory of what was discussed'},
+      {num:'24 hours',desc:'is the window after a competitor mention to respond with a direct comparison — most callbacks take 3 days'},
+      {num:'₹85L',desc:'example: buyer said ₹85L max — follow-up offered a discount on a ₹1Cr unit instead of showing the 2BHK at ₹82L'},
+    ]
+  },
+  telecom:{
+    problem:'A telecom customer calls twice about network issues in the same area. The third call is a porting request. There was no proactive outreach between call 2 and the port — even though the pattern was visible.',
+    problemSub:'Churn in telecom is almost always predictable. The signals are in the call data. Most brands wait for the port request.',
+    stats:[
+      {num:'2 complaints',desc:'in 30 days predicts churn in telecom with over 70% accuracy — almost no brand has an automatic response to this pattern'},
+      {num:'Day 7',desc:'is the point of no return for a prepaid lapse — most reactivation attempts happen at day 14 or later'},
+      {num:'0',desc:'win-back campaigns that mentioned the specific network issue that drove the customer to leave'},
+    ]
+  },
+  insurance:{
+    problem:'An insurance customer calls about a health policy and mentions "they are expecting a baby." The quote comes back for standard individual cover. The maternity angle, the life insurance cross-sell, the child plan — none of it was captured from the call.',
+    problemSub:'Insurance is a life-events business. Every call is a life event. Most of them are filed as service tickets.',
+    stats:[
+      {num:'1 in 4',desc:'policy enquiry calls contains a life event signal — pregnancy, new job, home purchase — that should trigger a product conversation'},
+      {num:'3 years',desc:'average gap between a policy sale and the next outbound call from an insurer — even for customers with clear cross-sell signals on file'},
+      {num:'0',desc:'win-back calls that addressed the disputed claim that caused the lapse — most led with a renewal discount instead'},
+    ]
+  },
+  /* BOTH */
+  omnichannel:{
+    problem:'A customer spends 40 minutes in a store, tries 3 suits, says none fit well, and leaves. The associate does not log it. The loyalty app sends a "complete your look" email the next day featuring the same suits. Nobody connected the visit to the follow-up.',
+    problemSub:'In-store conversations are the richest customer signal you have. Almost none of it is captured in a usable form.',
+    stats:[
+      {num:'40 mins',desc:'example: customer spent 40 minutes in store and left without buying — zero follow-up action was taken'},
+      {num:'2 signals',desc:'customer wishlisted a jacket in the app and visited the store — both signals existed but were never connected'},
+      {num:'Fortnightly',desc:'example: a buyer who came every two weeks for 6 months went quiet — they received the same mass email as everyone else'},
+    ]
+  },
+  travel:{
+    problem:'A couple books a hotel for their anniversary. Pre-travel communication is a weather update and check-in instructions. Nobody used the occasion to offer a room upgrade, a couples dinner, or an early check-in — all of which they would have paid for.',
+    problemSub:'Travel brands collect the occasion at booking. Almost none of it reaches the pre-travel or in-stay team.',
+    stats:[
+      {num:'Anniversary',desc:'example: occasion stated at booking — pre-travel email was a weather update and luggage policy'},
+      {num:'1 flight',desc:'example: loyalty member was one flight from keeping Silver status — they got a generic points statement, not a targeted nudge'},
+      {num:'11 months',desc:'example: anniversary stay in April — win-back campaign waited until the following April to mention it'},
+    ]
+  },
+  fitness:{
+    problem:'A new member mentions a bad knee and limited morning availability during onboarding. The app pushes evening HIIT classes all week. The trainer calls to check in with no idea the member is 80% toward their weight goal.',
+    problemSub:'Fitness businesses collect the most personal data of any category — and use almost none of it to personalise the member experience.',
+    stats:[
+      {num:'Day 1',desc:'member mentioned their knee injury during onboarding — app recommended HIIT for 7 consecutive days'},
+      {num:'80%',desc:'example: member was 80% toward their weight goal when the trainer called "to check in" — trainer had no idea'},
+      {num:'10 days',desc:'of inactivity is the average window to recover a member before they mentally cancel — most gyms act at 30 days'},
+    ]
+  },
+  saas:{
+    problem:'A SaaS trial signs up, says they need it for their 12-person support team, goes through the solo setup flow, hits a feature they need and never sees it again, and churns at day 14. The trial was "low engagement." The engagement was low because the onboarding was wrong.',
+    problemSub:'Trial churn is mostly onboarding mismatch. The use case is stated at sign-up and ignored for the next 14 days.',
+    stats:[
+      {num:'8 logins',desc:'example: trial had 8 logins and 3 team members invited — flagged as "low engagement" and sent a discount email'},
+      {num:'3 months',desc:'example: team was at seat capacity for 3 consecutive months — expansion conversation happened at the quarterly QBR'},
+      {num:'40%',desc:'usage drop + 1 complaint call = churn risk — most CSMs find out when they see the Slack message about cancelling'},
+    ]
+  },
+  highered:{
+    problem:'A prospective student calls admissions and mentions that their parents are unsure about the ROI. The counsellor sends a course brochure to the student. The parent — the actual decision-maker — never hears a placement stat.',
+    problemSub:'Higher education admissions is a family sales process. Most CRMs treat it as a one-person funnel.',
+    stats:[
+      {num:'Parents',desc:'example: parents were the stated decision-maker — counsellor follow-up went to the student with a course brochure'},
+      {num:'IIM Indore',desc:'example: accepted candidate was comparing with a competitor — follow-up was a fee payment reminder'},
+      {num:'Essay section',desc:'example: applicant dropped off at the essay — re-engagement email said "complete your application"'},
+    ]
+  },
+};
+
+/* ============================================================
+   PROBLEM LIBRARY
+============================================================ */
+const PROBS = [
+  {cat:'Intent extraction from call',cc:'#E1F5EE',ct:'#085041',cb:'#1D9E75',seg:['new'],ch:'voice',pri:'high',ind:'Banking',
+   stmt:'First inbound service calls resolve tickets but capture no profile signal for future action.',
+   beh:'Customer calls about a statement error, casually mentions a home loan need',gap:'CRM logs a statement dispute — loan interest never captured',imp:'Banker misses a cross-sell that the customer almost handed them',
+   sell:'"Your customer mentioned a home loan need on a service call. Your CRM logged a statement dispute."'},
+  {cat:'Intent extraction from call',cc:'#E1F5EE',ct:'#085041',cb:'#1D9E75',seg:['new'],ch:'voice',pri:'high',ind:'Insurance',
+   stmt:'Policy enquiry calls capture the surface request but miss the life event driving it.',
+   beh:'Customer asks about health insurance, mentions "they are expecting a baby"',gap:'Quote sent for standard health cover — maternity angle not profiled',imp:'Customer buys from a competitor who asked about their situation',
+   sell:'"Your customer told you they\'re expecting. Your health insurance quote didn\'t mention maternity cover."'},
+  {cat:'Profile continuity on inbound',cc:'#EEEDFE',ct:'#3C3489',cb:'#7F77DD',seg:['returning'],ch:'voice',pri:'high',ind:'Banking',
+   stmt:'Returning customers are re-asked for information the bank already has on every inbound call.',
+   beh:'Repeat banking customer calls — agent asks name, account number, address',gap:'No unified profile surfaced on inbound — agent starts from scratch',imp:'Loyal customer feels like a stranger every time they call',
+   sell:'"Your six-year customer was asked to verify their account number. Again."'},
+  {cat:'Profile continuity on inbound',cc:'#EEEDFE',ct:'#3C3489',cb:'#7F77DD',seg:['returning'],ch:'voice',pri:'high',ind:'Healthcare',
+   stmt:'Returning patients re-answer the same questions at every visit or call.',
+   beh:'Patient calls to book, has visited 4 times before for the same condition',gap:'Front desk re-asks for symptoms, history, allergies — all already on file',imp:'Patient loses confidence; care continuity is broken',
+   sell:'"Your returning patient was asked to repeat their entire medical history."'},
+  {cat:'Churn signal detection',cc:'#FCEBEB',ct:'#791F1F',cb:'#E24B4A',seg:['returning'],ch:'voice',pri:'high',ind:'Telecom',
+   stmt:'Churn language on calls is not flagged — agent resolves the issue and closes the ticket.',
+   beh:'Customer says "I\'ve been looking at Jio" during a billing dispute',gap:'No real-time churn flag — agent follows standard resolution script',imp:'Customer ports within 30 days, no retention attempt made on the call',
+   sell:'"Your customer said a competitor\'s name on the call. Nothing happened."'},
+  {cat:'Cart and browse signal activation',cc:'#FAEEDA',ct:'#633806',cb:'#BA7517',seg:['new'],ch:'nonvoice',pri:'high',ind:'E-commerce',
+   stmt:'Cart abandoners all receive the same discount email regardless of intent profile.',
+   beh:'User added ₹3200 sneakers, viewed returns policy twice, then left',gap:'Generic "you left something behind" email — no intent differentiation',imp:'High-intent buyer given a discount they didn\'t need; margin lost',
+   sell:'"Not every cart abandoner needs 10% off. Some just needed reassurance."'},
+  {cat:'Cart and browse signal activation',cc:'#FAEEDA',ct:'#633806',cb:'#BA7517',seg:['new'],ch:'nonvoice',pri:'high',ind:'Food delivery',
+   stmt:'Dormant user push notifications are identical for every user regardless of order history.',
+   beh:'User always orders biryani on Friday evenings, has been quiet 10 days',gap:'Generic "we miss your appetite" push sent at a random time',imp:'Push ignored — user orders from a competitor app when Friday arrives',
+   sell:'"A user who orders every Friday at 7pm needs a very different message than someone who orders randomly."'},
+  {cat:'Lapse and win-back intelligence',cc:'#F1EFE8',ct:'#444441',cb:'#888780',seg:['returning'],ch:'nonvoice',pri:'high',ind:'Subscription boxes',
+   stmt:'Two-skip patterns are treated as neutral inventory preferences rather than churn signals.',
+   beh:'Subscriber skips months 2 and 3 in a row',gap:'No investigation triggered — skips logged as preference',imp:'Subscriber cancels at month 4 — easily preventable',
+   sell:'"Two skips in a row is a churn signal, not an inventory preference."'},
+  {cat:'Lapse and win-back intelligence',cc:'#F1EFE8',ct:'#444441',cb:'#888780',seg:['returning'],ch:'voice',pri:'high',ind:'Insurance',
+   stmt:'Lapsed policyholders are re-engaged with a discount rather than a response to their exit reason.',
+   beh:'Customer lapsed after a disputed claim — issue was service, not price',gap:'Win-back offer is a premium discount — doesn\'t address the actual reason for lapse',imp:'Customer sees no acknowledgement of their complaint and stays churned',
+   sell:'"They lapsed because of a claims dispute. You called them back with a renewal discount."'},
+  {cat:'Occasion and context intelligence',cc:'#E6F1FB',ct:'#0C447C',cb:'#378ADD',seg:['new','returning'],ch:'voice',pri:'high',ind:'Real estate',
+   stmt:'Site visit objections are not captured — post-visit follow-up ignores what the prospect said.',
+   beh:'Prospect visited site, said "east-facing is important for us"',gap:'Follow-up email shows all available units, not filtered by orientation',imp:'Prospect\'s key requirement missed — they buy from a project that listened',
+   sell:'"Your buyer told you on the site visit what mattered most. Your follow-up email showed them all units."'},
+  {cat:'Occasion and context intelligence',cc:'#E6F1FB',ct:'#0C447C',cb:'#378ADD',seg:['new'],ch:'both',pri:'high',ind:'Travel',
+   stmt:'Booking drop-offs receive generic re-engagement without using the call context that explains the drop.',
+   beh:'Couple dropped off booking after mentioning "travelling for our anniversary"',gap:'Drop-off email shows standard room options — occasion context lost',imp:'Couple books with a competitor that offered an anniversary package',
+   sell:'"They told you it\'s their anniversary. Your drop-off email showed them a room with a bed."'},
+  {cat:'Cross-sell and expansion moments',cc:'#FBEAF0',ct:'#72243E',cb:'#D4537E',seg:['returning'],ch:'voice',pri:'med',ind:'Banking',
+   stmt:'Life event signals on service calls are not used to trigger cross-sell conversations.',
+   beh:'Customer calls to update address to a new city',gap:'Address updated in system — relocation not linked to home loan intent',imp:'Cross-sell moment lost; customer gets a home loan from a competing bank',
+   sell:'"A change of address to a new city is a home loan signal. You filed it as an address update."'},
+  {cat:'Cross-sell and expansion moments',cc:'#FBEAF0',ct:'#72243E',cb:'#D4537E',seg:['returning'],ch:'both',pri:'med',ind:'SaaS',
+   stmt:'Expansion signals — seat capacity, power usage — are not proactively surfaced to the CSM.',
+   beh:'Account has been at maximum seat usage for 3 consecutive months',gap:'No expansion trigger — CSM finds out at the quarterly business review',imp:'Competitor pitches an upgrade first; account is now at risk',
+   sell:'"Your customer has been at seat capacity for 3 months. You found out at the QBR."'},
+];
+
+let selCdp='', selInd='', aStep=null, flow='new', fS='all', fC='all', fP='all';
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('on');
+}
+
+function onCdpChange(){
+  selCdp = document.getElementById('sel-cdp').value;
+  selInd = ''; aStep = null; flow = 'new';
+  const ind = document.getElementById('sel-industry');
+  if(!selCdp){ ind.disabled=true; ind.innerHTML='<option value="">— select CDP type first —</option>'; renderBody(); return; }
+  const grp = DATA[selCdp];
+  let opts = '<option value="">— select industry —</option>';
+  Object.keys(grp.industries).forEach(k=>{ opts+=`<option value="${k}">${grp.industries[k].name}</option>`; });
+  ind.innerHTML = opts; ind.disabled = false;
+  renderBody();
+}
+
+function onIndustryChange(){
+  selInd = document.getElementById('sel-industry').value;
+  aStep = null; flow = 'new';
+  renderBody();
+}
+
+function setFlow(f, btn){
+  flow = f; aStep = null;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderSnake();
+}
+
+
+function renderMeta(){
+  var m = INDUSTRY_META[selInd];
+  if(!m) return '';
+  var stats = m.stats.map(function(s){
+    return '<div class="sowhat-stat"><div class="sowhat-num">'+s.num+'</div><div class="sowhat-desc">'+s.desc+'</div></div>';
+  }).join('');
+  return '<div class="ind-problem"><div class="ind-problem-lbl">The business problem</div><div class="ind-problem-stmt">'+m.problem+'</div><div class="ind-problem-sub">'+m.problemSub+'</div></div><div class="sowhat"><div class="sowhat-lbl">Where the revenue is leaking — right now</div><div class="sowhat-grid">'+stats+'</div></div>';
+}
+
+function renderBody(){
+  const el = document.getElementById('journey-body');
+  if(!selCdp || !selInd){ el.innerHTML='<div class="empty-state"><div class="big">↑</div>Select a CDP type and industry above to explore the journey</div>'; return; }
+  const cdp = DATA[selCdp]; const ind = cdp.industries[selInd];
+  el.innerHTML = `
+    <div class="ind-bar">
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:4px">
+        <span class="ind-title">${ind.name}</span>
+        <span class="cbadge ${cdp.badge}">${cdp.badgeText}</span>
+      </div>
+      <div class="ind-sub">${ind.tagline}</div>
+    </div>
+    <div class="tps">${ind.touchpoints.map(t=>`<div class="tp">${t}</div>`).join('')}</div>
+    ${renderMeta()}
+    <div class="flow-row">
+      <button class="fbtn${flow==='new'?' on':''}" onclick="setFlow('new',this)">New customer</button>
+      <button class="fbtn${flow==='returning'?' on':''}" onclick="setFlow('returning',this)">Returning customer</button>
+      <button class="fbtn lapsed-btn${flow==='lapsed'?' on':''}" onclick="setFlow('lapsed',this)">Lapsed / reactivation</button>
+    </div>
+    <div class="jwrap">
+      <div class="jlabel">Click any stage to see what ConvoBrains solves</div>
+      <div id="snake"></div>
+    </div>`;
+  renderSnake();
+}
+
+function renderSnake(){
+  if(!selCdp || !selInd) return;
+  const ind = DATA[selCdp].industries[selInd];
+  // Support both old single-array format (steps) and new split format (new/returning/lapsed)
+  let ss;
+  if(flow==='lapsed') ss = ind.lapsed || [];
+  else if(flow==='returning') ss = ind.returning || ind.steps || [];
+  else ss = ind.new || ind.steps || [];
+  if(!ss.length){ document.getElementById('snake').innerHTML='<div style="padding:2rem;color:#aaa;font-size:13px">No stages defined for this view.</div>'; return; }
+  let h = '';
+  for(let i=0; i<ss.length; i++){
+    const s=ss[i], ri=Math.floor(i/3), pi=i%3, isR=ri%2===1;
+    if(pi===0) h+=`<div class="row${isR?' rev':''}">`;
+    h+=`<div class="step${aStep===i?' on':''}" onclick="sel(${i})">
+      <div class="snum">Stage ${i+1}</div>
+      <div class="stitle">${s.t}</div>
+      <div class="ssub">${s.s}</div>
+      <div class="stag ${s.tag}">${s.tl}</div>
+    </div>`;
+    if(pi===2||i===ss.length-1){
+      h+='</div>';
+      if(i<ss.length-1) h+=`<div class="conn${isR?' rev':''}"><div class="carr${isR?' l':''}"></div></div>`;
+    }
+  }
+  if(aStep!==null){
+    const s=ss[aStep];
+    h+=`<div class="det show">
+      <div class="dhead"><div class="dtitle">${s.t} — what ConvoBrains solves</div><button class="dclose" onclick="cls()">&#215;</button></div>
+      <div class="dgrid">
+        <div class="dbox"><div class="dlbl">The problem today</div><div class="dval">${s.prob}</div></div>
+        <div class="dbox"><div class="dlbl">What we do</div><div class="dval">${s.does}</div></div>
+      </div>
+      <div class="exstrip"><div class="expill">Example</div><div class="extext">${s.ex}</div></div>
+      <div class="sellstrip"><div class="selllbl">Opening line to client</div><div class="sellval">${s.sell}</div></div>
+    </div>`;
+  }
+  document.getElementById('snake').innerHTML = h;
+}
+
+function sel(i){ aStep=aStep===i?null:i; renderSnake(); }
+function cls(){ aStep=null; renderSnake(); }
+
+/* PROBLEM LIBRARY */
+function setFS(v,btn){ fS=v; resetGroup(0,3,btn); rp(); }
+function setFC(v,btn){ fC=v; resetGroup(3,7,btn); rp(); }
+function setFP(v,btn){ fP=v; resetGroup(7,10,btn); rp(); }
+
+function resetGroup(from,to,active){
+  const btns = document.querySelectorAll('.fbar .fp');
+  for(let i=from;i<to&&i<btns.length;i++) btns[i].classList.remove('on');
+  active.classList.add('on');
+}
+
+function rp(){
+  const fil = PROBS.filter(p=>
+    (fS==='all'||p.seg.includes(fS)) &&
+    (fC==='all'||p.ch===fC) &&
+    (fP==='all'||p.pri===fP)
+  );
+  const byC={};
+  fil.forEach(p=>{ if(!byC[p.cat]) byC[p.cat]=[]; byC[p.cat].push(p); });
+  let h='';
+  Object.keys(byC).forEach(cat=>{
+    const it=byC[cat], c=it[0];
+    h+=`<div class="pcat"><div class="pchead"><span class="pclbl" style="background:${c.cc};color:${c.ct};border:1px solid ${c.cb}">${cat}</span><span class="pccnt">${it.length} problem${it.length>1?'s':''}</span></div>`;
+    it.forEach((p,i)=>{
+      const uid=cat.replace(/\W/g,'_')+i;
+      const st=p.seg.map(s=>s==='new'?'<span class="pt pt-n">new</span>':'<span class="pt pt-r">returning</span>').join('');
+      const ch=p.ch==='voice'?'<span class="pt pt-v">voice</span>':p.ch==='nonvoice'?'<span class="pt pt-nv">non-voice</span>':'<span class="pt pt-b">both</span>';
+      const pt=p.pri==='high'?'<span class="pt pt-h">high priority</span>':'<span class="pt pt-m">medium</span>';
+      const pi=`<span style="font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600;background:#f5f3ef;color:#888">${p.ind}</span>`;
+      h+=`<div class="pc" id="pc_${uid}" onclick="tp('${uid}')">
+        <div class="pcstmt">${p.stmt}</div>
+        <div class="pctags">${st}${ch}${pt}${pi}</div>
+        <div class="pcdet" id="pd_${uid}">
+          <div class="pdg">
+            <div class="pdb"><div class="pdl">Behaviour</div><div class="pdv">${p.beh}</div></div>
+            <div class="pdb"><div class="pdl">System gap</div><div class="pdv">${p.gap}</div></div>
+          </div>
+          <div class="pdb" style="margin-bottom:6px"><div class="pdl">Business impact</div><div class="pdv">${p.imp}</div></div>
+          <div class="pds"><div class="pdsl">Opening line</div><div class="pdsv">${p.sell}</div></div>
+        </div>
+      </div>`;
+    });
+    h+='</div>';
+  });
+  document.getElementById('prob-area').innerHTML = h || '<div style="padding:2rem;text-align:center;color:#aaa">No problems match this filter.</div>';
+}
+
+function tp(uid){
+  const d=document.getElementById('pd_'+uid), c=document.getElementById('pc_'+uid);
+  const o=d.classList.contains('show');
+  document.querySelectorAll('.pcdet').forEach(x=>x.classList.remove('show'));
+  document.querySelectorAll('.pc').forEach(x=>x.classList.remove('open'));
+  if(!o){d.classList.add('show');c.classList.add('open');}
+}
+
+/* ============================================================
+   LAPSED / REACTIVATION DATA — patched onto existing industries
+   tag: 'tk'=Core wedge  'tw'=We differentiate  'ts'=Not our wedge
+============================================================ */
+const LAPSED = {
+  nonvoice: {
+    ecommerce: [
+      {t:'Profile the lapse reason',s:'Last browse + purchase pattern analysed',tag:'tk',tl:'Core activation',prob:'Re-engagement blast sent on a fixed day-30 or day-90 timer to every lapsed buyer equally.',does:'Exit profile computed from last category browsed, last purchase value, whether the lapse followed a bad rating, and seasonal pattern.',ex:'Lapsed after a sale period. ConvoBrains holds the win-back until next sale event opens. Not a mid-season discount blast.',sell:'"You\'re spending margin on win-back offers to people who will only ever buy on sale anyway."'},
+      {t:'Reason-matched win-back',s:'Message matches the exit signal',tag:'tw',tl:'We differentiate',prob:'Same "we miss you + 10% off" to every lapsed buyer regardless of why they left.',does:'Price-sensitive lapse gets a sale alert. Replenishment lapse gets a restock nudge. Bad experience lapse gets an apology-first sequence.',ex:'User gave 2 stars on last order. Win-back: "We\'ve fixed what went wrong. Try again — on us." Not a generic discount.',sell:'"Someone who gave 2 stars didn\'t leave because of price. Offering them 10% off insults them twice."'},
+      {t:'Replenishment-timed re-entry',s:'Product cycle predicts the return window',tag:'tw',tl:'We differentiate',prob:'Win-back push sent on a calendar schedule, not when the product is likely to have run out.',does:'Purchase date + product category usage rate predicts the exact restock window. Win-back fires at peak replenishment need.',ex:'Lapsed buyer bought a 45-day skincare supply 43 days ago. Push: "Running low? We thought you might be." Not a generic comeback offer.',sell:'"Your lapsed buyer\'s product ran out 3 days ago. Your win-back email goes out on day 90."'},
+      {t:'High-LTV lapsed buyer',s:'Buyer with 3+ orders or ₹5k+ spend goes quiet',tag:'tk',tl:'Core activation',prob:'High-value lapsed buyer treated identically to a one-time purchaser in the win-back sequence.',does:'LTV threshold triggers a differentiated win-back — personal message, exclusive offer, or a direct call in high-value cases.',ex:'Buyer with 6 orders and ₹18,000 spend goes 90 days quiet. Win-back: not a 10% push — a loyalty credit and early access to new collection.',sell:'"You are sending your ₹18,000 lifetime buyer the same email as someone who bought lip balm once."'},
+    ],
+    music: [
+      {t:'Mid-series lapse detection',s:'User stopped a podcast or album mid-way',tag:'tw',tl:'We differentiate',prob:'Lapsed listener treated as fully disengaged — same "we miss you" push to all.',does:'Last play position identifies mid-series drop-offs. Re-engagement hooks on the specific content they stopped at, not a generic genre nudge.',ex:'Stopped at episode 4 of 8 in a true crime series. Push: "Episode 5 picks up right where it got intense." Not "we miss you."',sell:'"Your listener was 4 episodes in. They didn\'t lose interest in music. They just stopped. You sent a \'come back\' push."'},
+      {t:'Content-gap lapse',s:'User left citing missing content',tag:'tk',tl:'Core activation',prob:'Post-cancel offer is a discount — doesn\'t address the actual content gap.',does:'Exit survey language matched against new content additions. Win-back fires when the specific missing content arrives on platform.',ex:'User cited "missing podcasts" on exit. New partnerships launch. Win-back: "The shows you wanted are here now — at no extra cost."',sell:'"You offered 50% off to someone who left because content was missing. Discount doesn\'t fix that."'},
+      {t:'Price-sensitive exit',s:'Lapsed after billing or price change',tag:'tk',tl:'Core activation',prob:'Same win-back offer regardless of why they cancelled.',does:'Price-sensitivity signal from exit triggers a downgrade-first win-back. Cheaper plan re-entry, not full-price pressure.',ex:'User cancelled after premium price increase. Win-back: "Try our Lite plan — ad-free for your top 3 stations at ₹49/month."',sell:'"They cancelled because the price went up. You offered them the same price again with a 1-month free trial."'},
+    ],
+    media: [
+      {t:'Interest-triggered re-entry',s:'Lapsed subscriber\'s beat has a major story',tag:'tk',tl:'Core activation',prob:'Lapsed reader gets a generic "we miss you" or promotional email on a fixed schedule.',does:'Last read category matched against live news events. Win-back fires when a major story breaks in their interest area.',ex:'Subscriber last read tech stories. Major AI regulation announcement. Win-back: "The story you\'d want to read dropped today — here\'s access."',sell:'"Lapsed readers don\'t need a \'we miss you\'. They need a reason to come back."'},
+      {t:'Frequency-matched re-entry',s:'Lapsed due to email overload',tag:'tw',tl:'We differentiate',prob:'Win-back offers the same subscription that caused the lapse.',does:'Lapse signal — low open rate before exit — triggers a reduced-frequency win-back offer.',ex:'User opened 1 email in 30 days before cancelling. Win-back: "Try our weekly digest — one email, the best of the week."',sell:'"They told you why they left. It\'s in their engagement pattern."'},
+    ],
+    gaming: [
+      {t:'Social pull reactivation',s:'Friends active while player is dormant',tag:'tk',tl:'Core activation',prob:'Generic "come back" push ignores the social graph.',does:'Dormant player\'s friend activity cross-referenced. If friends are active, social FOMO is the win-back hook.',ex:'Player hasn\'t logged in 14 days, 3 friends played yesterday. Push: "Rohan, Priya and Dev played yesterday. Your squad is waiting."',sell:'"FOMO is the most powerful reactivation mechanic in social gaming. You\'re not using it."'},
+      {t:'Bug-fix or update-triggered win-back',s:'Issue that caused exit is now resolved',tag:'tw',tl:'We differentiate',prob:'Win-back email is generic — no connection to what frustrated the player when they left.',does:'Exit profile matched against patch notes. Win-back fires when the specific issue they complained about is fixed.',ex:'Player churned after a map bug on their main mode. Patch drops. Email: "The bug you hit on Dust 2 — it\'s fixed in this week\'s update."',sell:'"Players who left often come back for a specific reason. You don\'t know what that reason was."'},
+      {t:'Season-timing win-back',s:'New season or event is a re-entry hook',tag:'tw',tl:'We differentiate',prob:'Win-back timing is calendar-based, not event-aligned to the player\'s play style.',does:'New season content matched to the player\'s last game mode. Casual player gets story hook. Competitive player gets ranked season angle.',ex:'PvP player, churned 3 months ago. New ranked season launches. Email: "New ranked season — the map meta your main dominates is back."',sell:'"A new season is the best natural win-back window. You sent the same announcement to everyone."'},
+    ],
+    subbox: [
+      {t:'Exit reason win-back sequencing',s:'Cancelled subscriber — reason profiled',tag:'tk',tl:'Core activation',prob:'Same discount or "come back" email to all churned subscribers regardless of exit reason.',does:'Exit survey language + last behaviour profile determine win-back message, timing, and offer type.',ex:'Subscriber left citing poor curation fit. Win-back: "We rebuilt how we match products to your preferences — free first box, no commitment."',sell:'"You\'re offering discounts to someone who left because the product didn\'t fit them. Price wasn\'t the problem."'},
+      {t:'Life-stage re-invite',s:'Seasonal or lifestyle context changes',tag:'tw',tl:'We differentiate',prob:'Win-back timing is arbitrary — no connection to when the customer\'s situation might have changed.',does:'Lapse reason profiled as lifestyle-related (travel, budget, overstock). Re-engage when context signals a likely return.',ex:'Member paused for "too much stuff" in Jan. By March buying signals pick up in adjacent categories. Re-invite: "Back to normal? Your subscription is ready when you are."',sell:'"A member who paused because of overstock will be ready again in 6 weeks. You don\'t know that."'},
+    ],
+    beauty: [
+      {t:'Replenishment-overdue win-back',s:'Lapsed buyer whose product has likely run out',tag:'tk',tl:'Core activation',prob:'Win-back email sent on a generic 60-day timer, not aligned to the actual product lifecycle.',does:'Purchase date + SKU usage rate predicts exact restock window. Win-back fires at peak replenishment moment.',ex:'Bought a 50ml serum 43 days ago (42-day average usage). Push: "Running low? Your serum is probably nearly gone — restock now."',sell:'"A lapsed buyer whose product ran out 2 weeks ago needs a restock nudge, not a come-back discount."'},
+      {t:'Routine-gap re-engagement',s:'Lapsed buyer missing a category step',tag:'tw',tl:'We differentiate',prob:'Win-back shows generic bestsellers — not connected to the buyer\'s existing routine.',does:'Purchase history identifies the missing routine step. Win-back highlights the gap in their specific regimen.',ex:'Buyer has serum, toner, moisturiser — never bought SPF. Lapse win-back: "Your routine is one step short. Here\'s the most important one."',sell:'"You know exactly which step in their routine is missing. Your win-back showed them your top 10 products."'},
+    ],
+    food: [
+      {t:'Rating-based win-back',s:'User left after a bad experience',tag:'tk',tl:'Core activation',prob:'Win-back is a discount — no acknowledgement of the experience that caused the lapse.',does:'Last order rating profiled. Bad-experience lapse gets an apology-first sequence, then a "try again free" offer.',ex:'User gave 2 stars. Win-back: "We\'ve fixed what went wrong on your last order. Try again — this one\'s on us."',sell:'"Someone who gave 2 stars didn\'t leave because of price. Offering them 10% off insults them twice."'},
+      {t:'Craving-timed reactivation',s:'Day-of-week or time-of-day pattern detected',tag:'tw',tl:'We differentiate',prob:'Win-back push sent at a random time with a generic message.',does:'Historical order time pattern predicts the best re-engagement window. Push fires at the exact moment the user is most likely to be hungry.',ex:'User always ordered biryani on Friday evenings. Gone quiet 3 weeks. Thursday push: "Friday biryani mood? Your favourite is back — 20% off this weekend."',sell:'"A user who orders every Friday at 7pm should get a Thursday nudge, not a Tuesday morning push."'},
+    ],
+    edtech: [
+      {t:'Job-market-triggered re-engagement',s:'Hiring surge in learner\'s target role',tag:'tw',tl:'We differentiate',prob:'Win-back email is a generic "your course is waiting" message on a fixed timer.',does:'Course category matched against live job market signals. Win-back fires when demand spikes for the learner\'s target role.',ex:'Learner studying UX design went quiet. Surge in UX job postings. Email: "UX roles are up 28% this month — your certificate is 60% done."',sell:'"A learner who wants a job doesn\'t need motivation. They need to know the market is hot right now."'},
+      {t:'Module-difficulty empathy',s:'Learner stalled on the hardest module',tag:'tk',tl:'Core activation',prob:'Same "keep going" push to all stalled learners, regardless of where they stalled.',does:'Stall point in curriculum identified. Hardest modules get a "this trips everyone up" empathy hook + shortcut resource.',ex:'Stalled on Python module 4 — historically hardest. Push: "Module 4 stops most people. Here\'s a 5-minute shortcut to get past it."',sell:'"The learner who stalled on the hardest module needs a lifeline, not a motivational quote."'},
+      {t:'Streak-loss recovery',s:'Long streak broken, learner disengaged',tag:'tw',tl:'We differentiate',prob:'Streak-break notification identical for a 3-day streak and a 90-day streak.',does:'Streak length drives the urgency and tone of the recovery message.',ex:'67-day streak broken. Push: "67 days — your longest ever. Day 68 is one lesson. Don\'t let the gap become the story."',sell:'"Someone who broke a 67-day streak is devastated. Your push said the same thing you\'d say to someone who missed day 3."'},
+    ],
+  },
+  voice: {
+    banking: [
+      {t:'Exit-reason profiled churn',s:'Customer signalled intent to close or switch',tag:'tk',tl:'Core wedge',prob:'Retention attempt is a generic fee waiver or interest rate offer — regardless of the actual exit reason.',does:'Churn signal type from last call — fee complaint, service failure, competitor mention — determines the specific retention response.',ex:'Customer called to close account citing "too many charges." Retention call leads with a fee structure review, not an FD upsell.',sell:'"An angry customer who\'s about to leave told you exactly why. Your retention script didn\'t listen."'},
+      {t:'FD / investment renewal lapse',s:'Maturity passed with no renewal action',tag:'tk',tl:'Core wedge',prob:'Renewal reminder is a generic "your FD has matured" message with no personal context.',does:'Past call context — stated investment goal, risk appetite, life stage — shapes the renewal conversation.',ex:'Customer mentioned "saving for daughter\'s education" 2 years ago. FD matures. Call: "Your education fund is due — ready to renew toward the same goal?"',sell:'"Your customer told you what they were saving for. Your renewal call forgot."'},
+      {t:'Long-dormant account outbound',s:'Account active but no transactions in 90+ days',tag:'tw',tl:'We differentiate',prob:'Dormant outbound call is scripted — agent has no context on why the account went quiet.',does:'Last call signal + product usage + complaint history shape the outbound brief. Agent knows what angle to open with.',ex:'Account dormant after a billing dispute 4 months ago. Outbound brief: "Dispute was the last interaction — open with resolution confirmation, not a product pitch."',sell:'"Your outbound agent called a customer whose last interaction was a complaint. They started with a cross-sell."'},
+    ],
+    healthcare: [
+      {t:'Clinical-context lapse outreach',s:'Patient overdue for follow-up or review',tag:'tk',tl:'Core wedge',prob:'Lapsed patient outreach is a generic "time for a check-up" reminder.',does:'Condition tags + last visit reason shape the re-engagement call. Outreach is clinically specific, not calendar-generic.',ex:'Patient has hypertension on record. Last visit 14 months ago. Outbound: "Your last BP check was over a year ago — Dr Mehta has a 15-minute slot this week."',sell:'"Your lapsed patient with hypertension got the same re-engagement call as someone who came in for a cold."'},
+      {t:'No-show re-booking with context',s:'Missed appointment needs a contextual re-book',tag:'tw',tl:'We differentiate',prob:'No-show follow-up is a generic "rebook your appointment" SMS.',does:'Call history reveals the no-show reason. Re-booking offer addresses the specific barrier.',ex:'Patient mentioned "getting there is a problem" on booking call. No-show follow-up: "We have a telemedicine slot — same doctor, no travel needed."',sell:'"Your patient told you why they might not come. Your no-show SMS didn\'t read the notes."'},
+      {t:'Preventive care gap trigger',s:'Family history or condition flags a gap',tag:'tw',tl:'We differentiate',prob:'Preventive care reminders go on a fixed age/calendar schedule to all eligible patients.',does:'Past call context — family history, stated concern, last test result — personalises the preventive care outreach.',ex:'Patient mentioned "my father had diabetes" on a past call. Annual outreach: "Given your family history, here\'s a diabetes screening package — 15 minutes."',sell:'"Your patient mentioned their family history. Your annual reminder didn\'t connect those dots."'},
+    ],
+    auto: [
+      {t:'Service-overdue outbound',s:'Vehicle past scheduled service interval',tag:'tk',tl:'Core wedge',prob:'Service reminder is a generic "your service is due" SMS on a fixed kilometre/time schedule.',does:'Last service call context — upcoming trip, specific complaint, extended warranty interest — personalises the re-engagement.',ex:'Customer mentioned a long drive to Coorg at last service. Overdue outbound: "Your trip is coming up — want to lock in a full service before you go?"',sell:'"Your customer told the service advisor about their Coorg trip. Nobody used it for the next service call."'},
+      {t:'Post-complaint lapse recovery',s:'Customer went quiet after a service complaint',tag:'tw',tl:'We differentiate',prob:'Lapsed customer after a complaint is treated the same as any inactive customer.',does:'Complaint type and resolution quality logged. Follow-up prioritises trust restoration before any commercial pitch.',ex:'Customer complained about a billing error after last service. Gone quiet 6 months. Outbound: "We wanted to check — has everything been okay since we sorted the billing issue?"',sell:'"Your customer went quiet after a complaint. Your win-back offered them a discounted service."'},
+    ],
+    realestate: [
+      {t:'Life-stage re-engagement',s:'Lead who said "not yet" — timing may have changed',tag:'tk',tl:'Core wedge',prob:'Lapsed leads are re-contacted with the same generic project pitch.',does:'Original call context — timeline hint, life stage signal, budget — determines the re-engagement timing and angle.',ex:'Lead said "targeting possession after my son\'s school year ends." ConvoBrains waits until April, re-engages with possession timeline now aligned.',sell:'"Your buyer told you when they wanted to move. Your re-engagement call went out in January."'},
+      {t:'Price-change trigger',s:'Project price or availability changed since last call',tag:'tw',tl:'We differentiate',prob:'Price change alerts are mass-sent to all dormant leads.',does:'Profile filters which lapsed leads are most likely to re-engage based on the nature of the change and their original objection.',ex:'Lead\'s objection was ₹82L price point. Price revised to ₹79L. Outbound: "The unit you looked at — price just came down ₹3L. Want to take another look?"',sell:'"Your price drop is a trigger for some buyers and noise for others. You sent it to everyone."'},
+    ],
+    telecom: [
+      {t:'Pre-port retention',s:'Churn signals detected before port request',tag:'tk',tl:'Core wedge',prob:'Churn action is triggered only when the port request arrives — too late for most interventions.',does:'Multi-signal churn score — usage drop, complaint frequency, plan browse — triggers a proactive retention call before intent becomes action.',ex:'Customer\'s data usage dropped 60%, raised a billing complaint, browsed competitor plans. ConvoBrains fires a retention call with a pre-built brief — before the port request.',sell:'"You know 3 signals that predict churn. You\'re waiting for a 4th — the port request."'},
+      {t:'Post-port win-back',s:'Customer has switched provider',tag:'tw',tl:'We differentiate',prob:'Win-back offer is a generic discount — no connection to the exit reason.',does:'Exit profile from last interaction — network quality, price, or competitor offer — shapes the win-back timing and pitch.',ex:'Customer cited network quality as exit reason. Win-back fires when a new tower is installed in their pin code: "Your area\'s network just got upgraded."',sell:'"Your win-back offer is a discount. They left because of network. They\'ll come back for network."'},
+    ],
+    insurance: [
+      {t:'Exit-reason matched win-back',s:'Policy lapsed or cancelled',tag:'tk',tl:'Core wedge',prob:'Win-back is a discount or generic renewal call — no connection to why they lapsed.',does:'Lapse reason — price, claim dissatisfaction, life change — built from last call. Win-back approach matches the exit reason precisely.',ex:'Customer lapsed after a disputed claim. Win-back is not a discount — it\'s a "your dispute has been reviewed" call with a revised settlement.',sell:'"They lapsed because of a claims dispute. You called them back with a renewal discount."'},
+      {t:'Life-event triggered re-entry',s:'Customer\'s circumstances have changed',tag:'tw',tl:'We differentiate',prob:'Dormant former policyholders are contacted on a fixed anniversary or seasonal schedule.',does:'Life event hints from past calls — kids mentioned, home purchase, new job — trigger a re-engagement when those events are likely to recur.',ex:'Former customer bought health policy 3 years ago, last call mentioned kids starting school. Outbound: "Health cover for the kids — they\'re probably school-age now?"',sell:'"Your policy has been inactive for 3 years. You haven\'t spoken to the customer once."'},
+    ],
+  },
+  both: {
+    omnichannel: [
+      {t:'High-frequency buyer outbound',s:'Fortnightly buyer gone quiet 90 days',tag:'tk',tl:'Core wedge',prob:'Mass win-back email with a discount sent to all lapsed loyalty members equally.',does:'Visit frequency + LTV threshold triggers a differentiated win-back — a personal call from the store manager for high-frequency buyers.',ex:'Buyer who came every 2 weeks, now 90 days silent. Outbound call from store manager — not a mass email.',sell:'"A buyer who came every two weeks deserves a phone call, not a mass email."'},
+      {t:'Sale-cycle aligned win-back',s:'Customer who only buys on sale',tag:'tw',tl:'We differentiate',prob:'Year-round win-back campaigns waste offers on buyers who will only convert during sale events.',does:'Purchase pattern identifies sale-only buyers. Win-back held until next sale event, then fired with a personalised "your wishlist" angle.',ex:'Customer bought exclusively in season sales. Lapse is off-season. Win-back waits for the sale, then: "Your sale wishlist — it starts this Friday."',sell:'"Some customers only buy on sale. Your year-round win-back campaigns are wasted on them."'},
+    ],
+    travel: [
+      {t:'Anniversary re-booking',s:'Guest who stayed for a special occasion',tag:'tk',tl:'Core wedge',prob:'Post-stay re-engagement is a generic "book again" offer sent on a fixed 90-day schedule.',does:'Stay purpose profiled. Occasion-anniversary win-back fires at the right time — 6 weeks before the next likely occasion.',ex:'Guest stayed for a wedding anniversary. 10 months later: "Your anniversary is coming up — same suite, early bird rate, breakfast included."',sell:'"Your guest told you they were celebrating an anniversary. You\'re waiting for them to remember to book."'},
+      {t:'Status-lapse reactivation',s:'Loyalty tier about to expire',tag:'tw',tl:'We differentiate',prob:'Generic tier expiry warning with no suggested action to retain status.',does:'Travel history and call context compute the easiest qualifying path. Personalised suggestion closes the gap.',ex:'Frequent flyer 1 flight short of silver. Outbound: "One short hop to Bangalore keeps your Silver — here are the next 3 available."',sell:'"Your loyalty member is one flight from keeping their status. You sent a generic points statement."'},
+    ],
+    fitness: [
+      {t:'Work-travel lapse re-invite',s:'Member paused due to travel or schedule',tag:'tk',tl:'Core wedge',prob:'Lapsed members all receive the same free class or discount win-back.',does:'Exit reason — travel, schedule, injury, relocation — shapes the re-engagement timing and message.',ex:'Member stopped after mentioning a work travel period. Win-back when travel likely ends: "Back in town? Your spot is here — free week to get back in the groove."',sell:'"A member who paused because of work travel isn\'t lapsed — they\'re returning. You treated them like a lost cause."'},
+      {t:'Goal-proximity re-engagement',s:'Member close to their fitness goal went quiet',tag:'tw',tl:'We differentiate',prob:'Inactive member re-engagement push is identical regardless of goal progress.',does:'Goal proximity score triggers a personalised trainer outreach — "you\'re this close" is a stronger hook than any discount.',ex:'Member was 80% toward their weight goal, went inactive 12 days. Trainer call: "You\'re so close — what\'s been getting in the way?"',sell:'"Your trainer called to check in. They had no idea the member was 80% toward their goal."'},
+    ],
+    saas: [
+      {t:'Churn-signal pre-emption',s:'Usage drop + complaint + feature abandonment',tag:'tk',tl:'Core wedge',prob:'CSM discovers churn risk when it\'s already in motion — after the Slack message, not before.',does:'Usage drop + complaint call log + feature abandonment compute churn score. CSM briefed with full conversation history for a proactive call.',ex:'Account usage dropped 40%, complaint call about a missing integration. CSM call: "We saw the change — the integration you mentioned is on Q3 roadmap."',sell:'"Your CSM found out about the churn risk when they saw the Slack message about cancelling."'},
+      {t:'Post-cancel win-back brief',s:'Account cancelled — re-engagement sequenced',tag:'tw',tl:'We differentiate',prob:'Win-back email is a generic discount or feature announcement — not connected to the exit reason.',does:'Exit call transcript identifies the churn reason. Win-back sequenced to address the specific issue: roadmap update, integration fix, or competitive response.',ex:'Account cancelled citing missing Salesforce integration. Integration ships 3 months later. Win-back: "The Salesforce sync you needed — it\'s live."',sell:'"Your churned customer told you exactly why they left. Your win-back email announced new pricing."'},
+    ],
+    highered: [
+      {t:'Deferred student re-engagement',s:'Accepted or deferred student goes quiet',tag:'tk',tl:'Core wedge',prob:'Deferred or accepted-but-silent student gets a generic follow-up or fee payment reminder.',does:'Acceptance drop-off profile — competing offer, financial concern, parent hesitation — shapes the follow-up call brief.',ex:'"Comparing with IIM Indore" was logged on a call. Accepted but silent. Counsellor call: "Here\'s a direct placement comparison — cost, alumni, and starting salaries."',sell:'"Your accepted candidate is comparing you with a competitor. Your follow-up is a fee payment reminder."'},
+      {t:'Alumni re-enrolment',s:'Past student returning for next programme',tag:'tw',tl:'We differentiate',prob:'Returning alumni treated as new leads — no profile from their previous enrolment used.',does:'Full profile from original enrolment — stated goal, career stage, complaint, satisfaction — loaded before counsellor calls.',ex:'Alumni enrolled for MBA prep, now calling about executive education. Brief: "Riya — CAT 97 percentile, now at Deloitte 3 years. Open with the corporate sponsorship angle."',sell:'"Your alumnus called back. Your counsellor asked them which programme they had studied."'},
+    ],
+  }
+};
+
+// Patch lapsed arrays onto DATA industries
+Object.keys(LAPSED).forEach(cdpKey=>{
+  Object.keys(LAPSED[cdpKey]).forEach(indKey=>{
+    if(DATA[cdpKey] && DATA[cdpKey].industries[indKey]){
+      DATA[cdpKey].industries[indKey].lapsed = LAPSED[cdpKey][indKey];
+    }
+  });
+});
+
+rp();
+</script>
+</body>
+</html>

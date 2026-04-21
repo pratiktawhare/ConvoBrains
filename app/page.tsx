@@ -15,13 +15,23 @@ import Link from "next/link";
 
 const industries = [
   { industry: "Real Estate", tagline: "From start to site visit to booking", href: "/industries/real-estate", slug: "real-estate" },
+  { industry: "Banking", tagline: "From service call to cross-sell to renewal", href: "/industries/banking", slug: "banking" },
   { industry: "Telecom", tagline: "From complaint to upsell to loyalty", href: "/industries/telecom", slug: "telecom" },
   { industry: "Insurance", tagline: "From query to policy to renewal", href: "/industries/insurance", slug: "insurance" },
+  { industry: "Healthcare", tagline: "From appointment to follow-up to retention", href: "/industries/healthcare", slug: "healthcare" },
+  { industry: "Automotive", tagline: "From showroom to service to upgrade", href: "/industries/auto", slug: "auto" },
+  { industry: "eCommerce", tagline: "From abandonment to repeat purchase", href: "/industries/ecommerce", slug: "ecommerce" },
+  { industry: "Subscription Boxes", tagline: "From skip signal to retention", href: "/industries/subbox", slug: "subbox" },
+  { industry: "Beauty & Care", tagline: "From first purchase to replenishment", href: "/industries/beauty", slug: "beauty" },
+  { industry: "Food Delivery", tagline: "From craving to reorder to win-back", href: "/industries/food", slug: "food" },
+  { industry: "EdTech", tagline: "From enrolment to completion", href: "/industries/edtech", slug: "edtech" },
   { industry: "Retail", tagline: "From browse to recovery to winback", href: "/industries/retail", slug: "retail" },
   { industry: "SaaS", tagline: "From trial to activation to expansion", href: "/industries/saas", slug: "saas" },
-  { industry: "Healthcare", tagline: "From appointment to follow-up", href: "/industries/healthcare", slug: "healthcare" },
-  { industry: "eCommerce", tagline: "From abandonment to repeat purchase", href: "/industries/ecommerce", slug: "ecommerce" },
   { industry: "Mutual Funds", tagline: "From onboarding to portfolio growth", href: "/industries/bfsi", slug: "bfsi" },
+  { industry: "Omnichannel Retail", tagline: "From store visit to loyalty to win-back", href: "/industries/omnichannel", slug: "omnichannel" },
+  { industry: "Travel", tagline: "From booking to stay to re-booking", href: "/industries/travel", slug: "travel" },
+  { industry: "Fitness", tagline: "From onboarding to renewal", href: "/industries/fitness", slug: "fitness" },
+  { industry: "Higher Education", tagline: "From enquiry to enrolment", href: "/industries/highered", slug: "highered" },
 ];
 
 const dataSources = [
@@ -182,34 +192,43 @@ export default function Home() {
       {/* ===== SECTION 4: CAPTURE DATA FROM ANYWHERE ===== */}
       <SectionWrapper bg="white">
         <ScrollReveal>
-          <div className="text-center mb-10">
+          <div className="text-center mb-12">
+            <EyebrowTag label="Integrations" />
             <h2 className="text-3xl font-heading font-semibold text-black mb-4">
-              Integrated natively
+              Connect every customer touchpoint in minutes
             </h2>
-            <p className="text-black max-w-xl mx-auto mb-8">
-              Push and pull data directly using our 100+ native integrations.
+            <p className="text-neutral-mid max-w-2xl mx-auto">
+              Capture every voice call, chat, email, and web session in one place — automatically. No manual imports, no data silos.
             </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-4 max-w-5xl mx-auto mb-10">
-          {dataSources.map((source) => (
-            <div key={source.label} className="flex flex-col items-center justify-center gap-2">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${source.color} border border-border`}>
-                {source.icon}
+        {/* Data source channels */}
+        <ScrollReveal delay={0.1}>
+          <p className="text-center text-xs font-semibold uppercase tracking-widest text-neutral-mid mb-4">Channels we capture from</p>
+          <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-4 max-w-5xl mx-auto mb-12">
+            {dataSources.map((source) => (
+              <div key={source.label} className="flex flex-col items-center justify-center gap-2">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${source.color} border border-border`}>
+                  {source.icon}
+                </div>
+                <span className="text-[10px] font-medium text-black text-center">{source.label}</span>
               </div>
-              <span className="text-[10px] font-medium text-black text-center">{source.label}</span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </ScrollReveal>
 
-        <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-          {integrations.map((name) => (
-            <div key={name} className="px-4 py-1.5 rounded-md border border-border bg-neutral-light text-xs font-medium text-slate-500">
-              {name}
-            </div>
-          ))}
-        </div>
+        {/* Platform integrations */}
+        <ScrollReveal delay={0.2}>
+          <p className="text-center text-xs font-semibold uppercase tracking-widest text-neutral-mid mb-4">Platforms we integrate with</p>
+          <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
+            {integrations.map((name) => (
+              <div key={name} className="px-4 py-1.5 rounded-md border border-border bg-neutral-light text-xs font-medium text-slate-500">
+                {name}
+              </div>
+            ))}
+          </div>
+        </ScrollReveal>
       </SectionWrapper>
 
       {/* ===== SECTION 5: MINIMIZED PROVEN RESULTS ===== */}

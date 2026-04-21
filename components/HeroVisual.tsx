@@ -16,7 +16,7 @@ export function HeroVisual() {
         className="relative"
       >
         {/* Main profile card */}
-        <div className="bg-navy-light/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-2xl glow-border">
+        <div className="bg-black backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-2xl glow-border">
           {/* Header */}
           <div className="flex items-center gap-3 mb-5">
             <div className="w-11 h-11 rounded-full bg-gradient-to-br from-brand to-accent flex items-center justify-center text-white font-bold text-sm">
@@ -96,7 +96,7 @@ export function HeroVisual() {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.8, duration: 0.5 }}
-          className="absolute -left-4 md:-left-16 top-8 bg-navy-light/90 backdrop-blur rounded-xl border border-white/10 p-3 shadow-lg"
+          className="absolute -left-4 md:-left-16 top-8 bg-black backdrop-blur rounded-xl border border-white/10 p-3 shadow-lg"
         >
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-brand/20 flex items-center justify-center">
@@ -125,7 +125,7 @@ export function HeroVisual() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.0, duration: 0.5 }}
-          className="absolute -right-4 md:-right-12 bottom-24 bg-navy-light/90 backdrop-blur rounded-xl border border-white/10 p-3 shadow-lg"
+          className="absolute -right-4 md:-right-12 bottom-24 bg-black backdrop-blur rounded-xl border border-white/10 p-3 shadow-lg"
         >
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">

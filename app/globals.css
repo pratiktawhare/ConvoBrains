@@ -1,20 +1,20 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-brand: #FF4000;
-  --color-brand-dark: #CC3300;
-  --color-accent: #F0652F;
-  --color-navy: #000000;
-  --color-navy-light: #222222;
-  --color-neutral-mid: #828282;
-  --color-neutral-dark: #000000;
-  --color-neutral-light: #EBEBE6;
-  --color-surface: #F6F6EF;
-  --color-border: #DCDCC7;
-  --color-slate-300: #CCCCCC;
-  --color-slate-400: #828282;
-  --color-slate-500: #666666;
-  --color-slate-700: #000000;
+  --color-brand: #0F7AE5;
+  --color-brand-dark: #0B5FBB;
+  --color-accent: #38A3F7;
+  --color-navy: #0F172A;
+  --color-navy-light: #1E293B;
+  --color-neutral-mid: #64748B;
+  --color-neutral-dark: #0F172A;
+  --color-neutral-light: #F1F5F9;
+  --color-surface: #F8FAFC;
+  --color-border: #E2E8F0;
+  --color-slate-300: #CBD5E1;
+  --color-slate-400: #94A3B8;
+  --color-slate-500: #64748B;
+  --color-slate-700: #334155;
 
   --font-heading: var(--font-sora);
   --font-body: var(--font-inter);
@@ -63,11 +63,11 @@
 
   0%,
   100% {
-    box-shadow: 0 0 20px rgba(255, 64, 0, 0.15);
+    box-shadow: 0 0 20px rgba(15, 122, 229, 0.15);
   }
 
   50% {
-    box-shadow: 0 0 40px rgba(255, 64, 0, 0.3);
+    box-shadow: 0 0 40px rgba(15, 122, 229, 0.3);
   }
 }
 
@@ -112,14 +112,14 @@ h6 {
 /* ===== MESH GRADIENT ===== */
 .mesh-gradient {
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(255, 64, 0, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(240, 101, 47, 0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, rgba(255, 64, 0, 0.04) 0%, transparent 50%);
+    radial-gradient(ellipse at 20% 50%, rgba(15, 122, 229, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(56, 163, 247, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(15, 122, 229, 0.04) 0%, transparent 50%);
 }
 
 /* ===== GLASS EFFECT ===== */
 .glass-navbar {
-  background: rgba(246, 246, 239, 0.95);
+  background: rgba(248, 250, 252, 0.95);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--color-border);
@@ -127,14 +127,14 @@ h6 {
 
 /* ===== TEAL GLOW BORDER (NOW YC ORANGE GLOW) ===== */
 .glow-border {
-  box-shadow: 0 0 10px rgba(255, 64, 0, 0.1),
-    inset 0 0 0 1px rgba(255, 64, 0, 0.2);
+  box-shadow: 0 0 10px rgba(15, 122, 229, 0.1),
+    inset 0 0 0 1px rgba(15, 122, 229, 0.2);
 }
 
 .glow-border-strong {
-  box-shadow: 0 0 20px rgba(255, 64, 0, 0.15),
-    0 0 40px rgba(255, 64, 0, 0.08),
-    inset 0 0 0 1px rgba(255, 64, 0, 0.4);
+  box-shadow: 0 0 20px rgba(15, 122, 229, 0.15),
+    0 0 40px rgba(15, 122, 229, 0.08),
+    inset 0 0 0 1px rgba(15, 122, 229, 0.4);
 }
 
 /* ===== SCROLLBAR ===== */
@@ -157,7 +157,7 @@ h6 {
 
 /* ===== SELECTION ===== */
 ::selection {
-  background: rgba(30, 207, 160, 0.25);
+  background: rgba(15, 122, 229, 0.15);
   color: var(--color-navy);
 }
 

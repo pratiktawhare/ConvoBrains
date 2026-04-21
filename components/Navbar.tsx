@@ -96,13 +96,23 @@ const solutionsColumns = [
 
 const industryLinks = [
   { label: "Real Estate", href: "/industries/real-estate" },
+  { label: "Banking", href: "/industries/banking" },
   { label: "Telecom", href: "/industries/telecom" },
   { label: "Insurance", href: "/industries/insurance" },
+  { label: "Healthcare", href: "/industries/healthcare" },
+  { label: "Automotive", href: "/industries/auto" },
+  { label: "eCommerce & D2C", href: "/industries/ecommerce" },
+  { label: "Subscription Boxes", href: "/industries/subbox" },
+  { label: "Beauty & Care", href: "/industries/beauty" },
+  { label: "Food Delivery", href: "/industries/food" },
+  { label: "EdTech", href: "/industries/edtech" },
   { label: "Retail", href: "/industries/retail" },
   { label: "SaaS", href: "/industries/saas" },
-  { label: "Healthcare", href: "/industries/healthcare" },
-  { label: "eCommerce & D2C", href: "/industries/ecommerce" },
   { label: "Mutual Funds / BFSI", href: "/industries/bfsi" },
+  { label: "Omnichannel Retail", href: "/industries/omnichannel" },
+  { label: "Travel & Hospitality", href: "/industries/travel" },
+  { label: "Fitness & Wellness", href: "/industries/fitness" },
+  { label: "Higher Education", href: "/industries/highered" },
 ];
 
 export function Navbar() {
